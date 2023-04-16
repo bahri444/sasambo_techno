@@ -107,23 +107,35 @@ class PesananController extends Controller
     // pesan langsung dari halaman detail produk custom
     public function AddPesanan(Request $req)
     {
-        $req->validate([
-            'procus_id' => 'required',
-            'color' => 'required',
-            'user_id' => 'required',
-            'size_order' => 'required',
-            'kurir_id' => 'required',
-            'payment_id' => 'required',
-            'jml_order' => 'required',
-            't_pesan' => 'required',
-            'tgl_order' => 'required',
-        ]);
+        if ($req->procus_id == true) {
+            $req->validate([
+                'procus_id' => 'required',
+                'color' => 'required',
+                'user_id' => 'required',
+                'size_order' => 'required',
+                'kurir_id' => 'required',
+                'payment_id' => 'required',
+                'jml_order' => 'required',
+                't_pesan' => 'required',
+                'tgl_order' => 'required',
+            ]);
+        } elseif ($req->sablon_id == true) {
+            $req->validate([
+                'user_id' => 'required',
+                'sablon_id' => 'required',
+                'kurir_id' => 'required',
+                'payment_id' => 'required',
+                'jml_order' => 'required',
+                't_pesan' => 'required',
+                'tgl_order' => 'required',
+            ]);
+        }
         try {
             $data = new Pesanan([
                 'procus_id' => $req->procus_id,
-                'color' => $req->color,
                 'user_id' => $req->user_id,
-                'size_order' => $req->size_order,
+                'sablon_id' => $req->sablon_id,
+                'size_orders' => $req->size_order,
                 'kurir_id' => $req->kurir_id,
                 'payment_id' => $req->payment_id,
                 'jml_order' => $req->jml_order,
@@ -135,38 +147,7 @@ class PesananController extends Controller
             return redirect('pesanananda')->with('success', 'pesanan berhasil');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return redirect('home')->with('errors', 'gagal');
-        }
-    }
-
-    public function PesanLangsungSablon(Request $request)
-    {
-        $request->validate([
-            'user_id' => 'required',
-            'sablon_id' => 'required',
-            'kurir_id' => 'required',
-            'payment_id' => 'required',
-            'jml_order' => 'required',
-            't_pesan' => 'required',
-            'tgl_order' => 'required',
-        ]);
-        // dd($request);
-        try {
-            $data = new Pesanan([
-                'user_id' => $request->user_id,
-                'sablon_id' => $request->sablon_id,
-                'kurir_id' => $request->kurir_id,
-                'payment_id' => $request->payment_id,
-                'jml_order' => $request->jml_order,
-                't_pesan' => $request->t_pesan,
-                'tgl_order' => $request->tgl_order,
-            ]);
-            // dd($data);
-            $data->save();
-            return redirect('pesanananda')->with("success", 'proses pemesanan sablon berhasil');
-        } catch (\Exception $e) {
-            Log::error($e->getMessage());
-            return redirect('pesanananda')->with('errors', 'pembayaran pemesanan sablon gagal');
+            return redirect('home')->with('errors', $e);
         }
     }
 
@@ -270,6 +251,27 @@ class PesananController extends Controller
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect('pesanan')->with('errors', 'diskon gagal');
+        }
+    }
+
+    // function konfirmasi pesanan selesai oleh customer
+    public function PesananSelesai(Request $req)
+    {
+        $req->validate([
+            'pesanan_id' => 'required',
+            'status_pesanan' => 'required'
+        ]);
+        try {
+            $data = array(
+                'pesanan_id' => $req->post('pesanan_id'),
+                'status_pesanan' => $req->post('status_pesanan')
+            );
+            // dd($data);
+            Pesanan::where('pesanan_id', $req->post('pesanan_id'))->update($data);
+            return redirect('pesanananda')->with('success', 'konfirmasi pesanan selesai, berhasil');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect('pesanan')->with('success', 'konfirmasi pesanan selesai, gagal');
         }
     }
 

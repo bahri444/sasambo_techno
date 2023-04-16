@@ -38,7 +38,7 @@
             @foreach($sablon as $val)
             @if($val->harga !=0)
             <div class="col">
-                <form action="/addsablontocart" method="post">
+                <form action="/addtocart" method="post">
                     @csrf
                     <div class="card h-100 card-body shadow-sm">
                         <input type="hidden" name="user_id" value="{{Auth::user()->user_id}}">
@@ -80,7 +80,7 @@
                             <h1 class="modal-title fs-5" id="exampleModalLabel">Pesan sablon</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <form action="pesanan/pesanlangsungsablon" method="post">
+                        <form action="pesanan/addpesanan" method="post">
                             <div class="modal-body">
                                 @csrf
                                 <div class="row">

@@ -187,9 +187,7 @@ Route::prefix('pesanan')->group(function () {
     Route::post('/bayarlunas', [PesananController::class, 'BayarLunas'])->name('bayarlunas');
     Route::post('/diskons', [PesananController::class, 'Discount'])->name('diskons');
     Route::get('/delpesanan/{id}', [PesananController::class, 'DeletePesanan'])->name('delpesanan');
-
-    // route pesan sablon secara langsung oleh customer
-    Route::post('/pesanlangsungsablon', [PesananController::class, 'PesanLangsungSablon'])->name('pesanlangsungsablon');
+    Route::post('/pesananselesai', [PesananController::class, 'PesananSelesai'])->name('pesananselesai'); //route konfirmasi pesanan selesai oleh member
 });
 
 Route::prefix('contactus')->group(function () {

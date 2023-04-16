@@ -78,7 +78,7 @@
                         <i class="fas fa-info"></i>
                         Detail
                     </button>
-                    @if($pes->status_pesanan != 'selesai')
+                    @if(($pes->status_pesanan == 'pending')||($pes->status_pesanan == 'diterima'))
                     @if($pes->pay_method == 'Cash' || $pes->b_dp != NULL)
                     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalBayarLunasSablon{{$pes->pesanan_id}}">
                         <i class="fas fa-dollar-sign"></i>
@@ -90,6 +90,11 @@
                         Bayar dp
                     </button>
                     @endif
+                    @elseif($pes->status_pesanan == 'kirim')
+                    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#KonfirmasiSelesai{{$pes->pesanan_id}}">
+                        <i class="fas fa-check"></i>
+                        Konfirmasi
+                    </button>
                     @elseif($pes->status_pesanan == 'selesai')
                     <a href="/home" class="btn btn-outline-success">Beli lagi</a>
                     @endif
@@ -163,24 +168,77 @@
                                 <p>: Rp. <?= $total_harga = ($pes->jml_order * $pes->harga) ?> </p>
                             </div>
                         </div>
+                        <!-- status pesanan -->
                         <div class="row">
+                            @if($pes->status_pesanan == 'diterima')
+                            @if($pes->stts_produksi == 'pending')
                             <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
                                 <h6>Status pesanan</h6>
                             </div>
-                            @if($pes->pay_status == "pending")
-                            <div class="col">
-                                <p class="text text-danger">: lakukan pembayaran terlebih dahulu</p>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"menunggu pengerjaan"}}</p>
                             </div>
-                            @elseif($pes->pay_status == "verifikasi")
-                            <div class="col">
-                                <p class="text text-success">: pembayaran menunggu persetujuan</p>
+                            @elseif($pes->stts_produksi == 'produksi')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
                             </div>
-                            @elseif($pes->pay_status != "pending" && $pes->pay_status != "verifikasi")
-                            <div class="col">
-                                <p class="text text-success">: pesanan {{$pes->status_pesanan}}</p>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"sedang di kerjakan"}}</p>
+                            </div>
+                            @elseif($pes->stts_produksi == 'packing')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"sedang di packing"}}</p>
+                            </div>
+                            @elseif($pes->stts_produksi == 'selesai')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"menunggu jadwal pengiriman"}}</p>
+                            </div>
+                            @endif
+                            @elseif($pes->status_pesanan == 'kirim')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"di kirim oleh, "}}{{$pes->nama_jakir}}</p>
                             </div>
                             @endif
                         </div>
+                        <!-- end-status pesanan -->
+
+                        <!-- kondisi untuk mengecek apakah sudah ada pembayaran atau tidak -->
+                        <div class="row">
+                            @if($pes->pay_status == "pending")
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pembayaran</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-danger">: {{"lakukan pembayaran terlebih dahulu"}}</p>
+                            </div>
+                            @elseif($pes->pay_status == "verifikasi")
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pembayaran</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"proses verifikasi"}}</p>
+                            </div>
+                            @elseif($pes->pay_status == "belum lunas")
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pembayaran</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"lakukan pembayaran kedua untuk melunasi pesanan anda"}}</p>
+                            </div>
+                            @endif
+                        </div>
+                        <!-- end-kondisi untuk mengecek apakah sudah ada pembayaran atau tidak -->
+
+                        <!-- kondisi untuk cek jumlah dp dan lunas -->
                         <div class="row">
                             @if($pes->b_dp != NULL && $pes->b_lunas == NULL)
                             <div class="col">
@@ -198,6 +256,7 @@
                             </div>
                             @endif
                         </div>
+                        <!-- end-kondisi untuk cek jumlah dp dan lunas -->
                     </div>
                 </div>
             </div>
@@ -211,7 +270,7 @@
         @foreach($data_pesanan as $vals)
         @if(Auth::user()->user_id == $vals->user_id && $vals->procus_id == TRUE)
 
-        <!-- view read transaction pakaian custom dan sablon -->
+        <!-- view read transaction pakaian custom -->
         <div class="card">
             <div class="card-body shadow-sm">
                 <div class="row align-items-center">
@@ -271,7 +330,7 @@
                             <i class="fas fa-info"></i>
                             Detail
                         </button>
-                        @if($vals->status_pesanan != 'selesai')
+                        @if(($vals->status_pesanan == 'pending')||($vals->status_pesanan == 'diterima'))
                         @if($vals->pay_method == 'Cash' || $vals->b_dp != NULL)
                         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalBayarLunas{{$vals->pesanan_id}}">
                             <i class="fas fa-dollar-sign"></i>
@@ -285,8 +344,14 @@
                         @endif
                         @elseif($vals->status_pesanan == 'selesai')
                         <a href="/home" class="btn btn-outline-success">Beli lagi</a>
+                        @elseif($vals->status_pesanan == 'kirim')
+                        <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#KonfirmasiSelesai{{$vals->pesanan_id}}">
+                            <i class="fas fa-check"></i>
+                            Konfirmasi
+                        </button>
                         @endif
                     </div>
+                    <!-- end-tombol pembayaran dan info -->
                 </div>
             </div>
         </div>
@@ -357,20 +422,76 @@
                                 <p>: Rp. <?= $total_harga = ($vals->jml_order * $vals->harga_satuan) ?></p>
                             </div>
                         </div>
+
+                        <!-- status pesanan -->
+                        <div class="row">
+                            @if($vals->status_pesanan == 'diterima')
+                            @if($vals->stts_produksi == 'pending')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"menunggu pengerjaan"}}</p>
+                            </div>
+                            @elseif($vals->stts_produksi == 'produksi')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"sedang di kerjakan"}}</p>
+                            </div>
+                            @elseif($vals->stts_produksi == 'packing')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"sedang di packing"}}</p>
+                            </div>
+                            @elseif($vals->stts_produksi == 'selesai')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"menunggu jadwal pengiriman"}}</p>
+                            </div>
+                            @endif
+                            @elseif($vals->status_pesanan == 'kirim')
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"di kirim oleh, "}}{{$vals->nama_jakir}}</p>
+                            </div>
+                            @endif
+                        </div>
+                        <!-- end-status pesanan -->
+
                         <!-- kondisi untuk mengecek apakah sudah ada pembayaran atau tidak -->
-                        @if($vals->pay_status == "pending")
-                        <div class="col mt-1 text text-center">
-                            <p class="text text-danger">lakukan pembayaran terlebih dahulu</p>
+                        <div class="row">
+                            @if($vals->pay_status == "pending")
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pembayaran</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-danger">: {{"lakukan pembayaran terlebih dahulu"}}</p>
+                            </div>
+                            @elseif($vals->pay_status == "verifikasi")
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pembayaran</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"proses verifikasi"}}</p>
+                            </div>
+                            @elseif($vals->pay_status == "belum lunas")
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                                <h6>Status pembayaran</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                                <p class="text text-success">: {{"lakukan pembayaran kedua untuk melunasi pesanan anda"}}</p>
+                            </div>
+                            @endif
                         </div>
-                        @elseif($vals->pay_status == "verifikasi")
-                        <div class="col mt-1 text text-center">
-                            <p class="text text-success">proses verifikasi</p>
-                        </div>
-                        @elseif($vals->pay_status != "pending" && $vals->pay_status != "verifikasi")
-                        <div class="col mt-1 text text-center">
-                            <p class="text text-success">pesanan {{$vals->status_pesanan}}</p>
-                        </div>
-                        @endif
+                        <!-- end-kondisi untuk mengecek apakah sudah ada pembayaran atau tidak -->
 
                         <!-- kondisi untuk cek jumlah dp dan lunas -->
                         @if($vals->b_dp != NULL && $vals->b_lunas == NULL)
@@ -406,6 +527,8 @@
                             <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
                         </div>
                         @endif
+                        <!-- end-kondisi untuk cek jumlah dp dan lunas -->
+
                     </div>
                 </div>
             </div>
@@ -490,6 +613,39 @@
             </div>
         </div>
         <!-- end modal bayar lunas -->
+
+        <!-- modal konfirmasi pesanan selesai -->
+        <div class="modal fade" id="KonfirmasiSelesai{{$vals->pesanan_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Konfirmasi pesanan selesai</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="pesanan/pesananselesai" method="post">
+                        @csrf
+                        <div class="modal-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="form-group">
+                                        <input type="hidden" value="{{$vals->pesanan_id}}" name="pesanan_id" class="form-control">
+                                        <h6>Selesaikan pesanan</h6>
+                                        <select name="status_pesanan" class="form-select" aria-label="Default select example">
+                                            <option value="selesai" selected>Selesai</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-check"></i>Selesai</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <!-- end modal konfirmasi pesanan selesai -->
         @endif
         @endforeach
     </div>

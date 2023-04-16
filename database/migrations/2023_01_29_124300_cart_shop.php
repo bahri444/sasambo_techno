@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id('cart_id');
             $table->foreignId('user_id');
             $table->foreignId('procus_id')->nullable();
-            $table->foreignId('warna_id')->nullable();
             $table->foreignId('sablon_id')->nullable();
             $table->char('size_order', 10)->nullable();
             $table->integer('jumlah_order')->length(10)->unsigned();
@@ -28,7 +27,6 @@ return new class extends Migration
 
             $table->foreign('user_id')->references('user_id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('procus_id')->references('procus_id')->on('produk_custom')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreign('warna_id')->references('warna_id')->on('warna')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('sablon_id')->references('sablon_id')->on('sablon')->cascadeOnUpdate()->cascadeOnDelete();
         });
     }
