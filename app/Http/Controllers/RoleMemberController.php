@@ -66,79 +66,19 @@ class RoleMemberController extends Controller
     // detail custom sebelum login
     public function DetailCustom($id)
     {
-        $data = Instansi::all();
-        $perusahaanPartner = Partner::select('logo_prshn', 'nama_prshn');
-        // $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
-        $procus = ProdukCustom::joinKategoriProdukCostum()->get();
-        $prdkGroup = ProdukCustom::select('produk_custom.nama_produk')->groupBy('produk_custom.nama_produk')->get();
-        // query menampilkan warna berdasarkan produk
-        $color = Warna::all();
-
-        $getProdukCustomByPaginate = ProdukCustom::paginate(1);
-        // load data kategori
-        $getProdukCustomById = ProdukCustom::find($id);
-        $FilterKategoriProdukCustom = $getProdukCustomById->ktgr_procus_id;
-        $getProdukCustomIfTogetherWithKategoriProdukCustom = ProdukCustom::where('ktgr_procus_id', $FilterKategoriProdukCustom)->get();
-        // dd($getProdukCustomIfTogetherWithKategoriProdukCustom);
-
-        $kategori_produk_custom = KtgrProcus::all();
-        $user = User::select('user_id', 'user_id')->get();
+        $instansi = Instansi::all();
+        $data_produk_custom = ProdukCustom::joinWarna()->joinKategoriProdukCostum()->get();
+        $get_size_with_nama_warna = ProdukCustom::joinWarna()->select('size', 'nama_warna')->get();
+        $data_id_produk = $id;
+        $partnerperusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         return view('home.pilihbaju', [
-            'title' => 'stok baju', //judul to header
-            'instansi' => $data, //load data instansi
-            'procus' => $procus,
-            'id' => $id, //ambil id dari url dan kirim ke view
-            'prdkgroup' => $prdkGroup,
-            'colors' => $color,
-            'kategori_produk_custom' => $kategori_produk_custom,
-            'getProdukCustomByPaginate' => $getProdukCustomByPaginate,
-            'user' => $user,
-            'getProdukCustomById' => $getProdukCustomById,
-            'getProdukCustomIfTogetherWithKategoriProdukCustom' => $getProdukCustomIfTogetherWithKategoriProdukCustom,
-            'partnerperusahaan' => $perusahaanPartner,
+            'instansi' => $instansi,
+            'data_produk_custom_id' => $data_id_produk,
+            'data_produk_custom' => $data_produk_custom,
+            'get_size_with_nama_warna' => $get_size_with_nama_warna,
+            'partnerperusahaan' => $partnerperusahaan
         ]);
     }
-
-    // detail custom setelah login
-    // public function SendToDetailBeforeCheckout($id)
-    // {
-    //     $data = Instansi::all();
-    //     $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
-    //     $procus = ProdukCustom::joinKategoriProdukCostum()->get();
-    //     // dd($procus);
-    //     // return response()->json(['procus' => $procus]);
-    //     $prdkGroup = ProdukCustom::select('produk_custom.nama_produk')->groupBy('produk_custom.nama_produk')->get();
-    //     // query menampilkan warna berdasarkan produk
-    //     $color = Warna::all();
-
-    //     $getProdukCustomByPaginate = ProdukCustom::paginate(1);
-    //     // load data kategori
-    //     $getProdukCustomById = ProdukCustom::find($id);
-    //     $FilterKategoriProdukCustom = $getProdukCustomById->ktgr_procus_id;
-    //     $getProdukCustomIfTogetherWithKategoriProdukCustom = ProdukCustom::where('ktgr_procus_id', $FilterKategoriProdukCustom)->get();
-    //     // dd($getProdukCustomIfTogetherWithKategoriProdukCustom);
-    //     // dd($procus);
-    //     $payment = Payment::all();
-    //     $kurir = Kurir::all();
-    //     $kategori_produk_custom = KtgrProcus::all();
-    //     $user = User::select('user_id', 'user_id')->get();
-    //     return view('members.detailprodukcustom', [
-    //         'title' => 'stok baju', //judul to header
-    //         'instansi' => $data, //load data instansi
-    //         'procus' => $procus,
-    //         'id' => $id, //ambil id dari url dan kirim ke view
-    //         'prdkgroup' => $prdkGroup,
-    //         'colors' => $color,
-    //         'kategori_produk_custom' => $kategori_produk_custom,
-    //         'getProdukCustomByPaginate' => $getProdukCustomByPaginate,
-    //         'user' => $user,
-    //         'getProdukCustomById' => $getProdukCustomById,
-    //         'getProdukCustomIfTogetherWithKategoriProdukCustom' => $getProdukCustomIfTogetherWithKategoriProdukCustom,
-    //         'isiKeranjang' => $isiKeranjang,
-    //         'kurir' => $kurir,
-    //         'payment' => $payment
-    //     ]);
-    // }
 
     // detail produk custom setelah login
     public function DetailProdukCustomSebelumCheckout($produk_custom_id)
@@ -148,8 +88,6 @@ class RoleMemberController extends Controller
         $data_produk_custom = ProdukCustom::joinWarna()->joinKategoriProdukCostum()->get();
         $get_size_with_nama_warna = ProdukCustom::joinWarna()->select('size', 'nama_warna')->get();
         $data_id_produk = $produk_custom_id;
-        // dd($dataSizeProduk);
-        // dd($get_size_with_nama_warna);
         return view('members.detailcustom', [
             'instansi' => $instansi,
             'isiKeranjang' => $isiKeranjang,

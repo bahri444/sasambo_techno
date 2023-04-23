@@ -48,6 +48,10 @@
         .text__nodecoration {
             text-decoration: none;
         }
+
+        .latar__belakang {
+            background-color: #0FAA5D;
+        }
     </style>
     <title>{{$title ?? ""}}</title>
 </head>

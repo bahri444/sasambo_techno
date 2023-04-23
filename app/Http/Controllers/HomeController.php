@@ -8,6 +8,7 @@ use App\Models\KtgrProcus;
 use App\Models\KtgrProsoft;
 use App\Models\Partner;
 use App\Models\ProdukCustom;
+use App\Models\Sablon;
 use App\Models\Tutorial;
 use App\Models\Video;
 use Illuminate\Http\Request;
@@ -88,13 +89,15 @@ class HomeController extends Controller
         $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         $instansi = Instansi::all();
         $procategori = KtgrProcus::joinToKategori()->get();
+        $sablon = Sablon::all();
         $procus = ProdukCustom::joinKategoriProdukCostum()->get();;
         return view('home.produk', [
             'title' => 'produk',
             'kategoricustom' => $procategori,
             'procus' => $procus,
             'instansi' => $instansi,
-            'partnerperusahaan' => $partnerPerusahaan
+            'partnerperusahaan' => $partnerPerusahaan,
+            'sablon' => $sablon
         ]);
     }
 
