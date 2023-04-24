@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\Auth\VerificationController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\HomeController;
@@ -21,7 +20,6 @@ use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\SablonController;
 use App\Http\Controllers\ShopCartController;
 use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WarnaController;
@@ -40,11 +38,6 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
-// use App\Events\NewUserRegistered;
-
-// Route::get('registers', function () {
-//     event(new NewUserRegistered('info@dicloud.id'));
-// });
 
 Auth::routes([
     'verify' => true
@@ -172,17 +165,13 @@ Route::prefix('warna')->group(function () {
     Route::get('/delete/{id}', [WarnaController::class, 'DeleteWarna'])->name('deletewarna');
 });
 
-// route table transaksi
-Route::prefix('transaksi')->group(function () {
-    Route::get('/', [TransaksiController::class, 'GetTransaksi'])->name('transaksi');
-});
-
-// route table pesanan pakaian custom
+// route table pesanan pakaian custom dan sablon
 Route::prefix('pesanan')->group(function () {
     Route::get('/', [PesananController::class, 'GetPesanan'])->name('pesanan');
     Route::post('validasipesanan', [PesananController::class, 'ValidasiPesanan'])->name('validasipesanan'); //for superadmin
     Route::post('validasiproduksi', [PesananController::class, 'ValidasiProduction'])->name('validasiproduksi'); //for role production
-    Route::post('/addpesanan', [PesananController::class, 'AddPesanan'])->name('addPesanan'); //checkout pesanan produk custom
+    Route::post('/addpesanan', [PesananController::class, 'AddPesanan'])->name('addPesanan'); //checkout sablon dari halaman home
+    Route::post('/checkoutnow', [PesananController::class, 'CheckoutNow'])->name('checkoutNow'); //checkout pesanan dari halaman detail produk custom
     Route::post('/bayar', [PesananController::class, 'BayarProdukCustom'])->name('bayar');
     Route::post('/bayarlunas', [PesananController::class, 'BayarLunas'])->name('bayarlunas');
     Route::post('/diskons', [PesananController::class, 'Discount'])->name('diskons');
@@ -237,21 +226,20 @@ Route::name('admin')->group(function () {
 
 // route for role access member or client
 Route::name('members')->group(function () {
-    Route::get('/home', [RoleMemberController::class, 'GetHome'])->name('home')->middleware('verified');
-    // Route::get('/selectcloth/{id}', [RoleMemberController::class, 'DetailCloth'])->name('pilihbaju')->middleware('verified');
-    //Route::get('/details/{id}', [RoleMemberController::class, 'SendToDetailBeforeCheckout'])->name('details')->middleware('verified'); // detail sebelum menambahkan ke keranjang barang
+    Route::get('/home', [RoleMemberController::class, 'GetHome'])->name('home');
     Route::get('/details/{produk_custom_id}', [RoleMemberController::class, 'DetailProdukCustomSebelumCheckout'])->name('details')->middleware('verified'); // detail sebelum menambahkan ke keranjang barang
 
     //route lengkapi profile oleh pelanggan
-    Route::get('/form', [UserController::class, 'GetForm'])->name('form'); //get form lengkapi akun
-    Route::post('/updtakun', [UserController::class, 'UpdtUser'])->name('updtakun'); //kirim nilai yang di input dari form
+    Route::get('/form', [UserController::class, 'GetForm'])->name('form')->middleware('verified'); //get form lengkapi akun
+    Route::post('/updtakun', [UserController::class, 'UpdtUser'])->name('updtakun')->middleware('verified'); //kirim nilai yang di input dari form
 
     Route::get('/profile', [UserController::class, 'GetAllUser'])->name('Profile')->middleware('verified');
     Route::get('/pesanananda', [PesananController::class, 'GetPesanan'])->name('pesanananda')->middleware('verified');
     Route::get('/invoice', [RoleMemberController::class, 'GetInvoice'])->name('invoice')->middleware('verified');
 
-    Route::get('/cart', [ShopCartController::class, 'GetDataCart'])->name('cart');
-    Route::post('/addtocart', [ShopCartController::class, 'AddToCart'])->name('addcart');
+    Route::get('/cart', [ShopCartController::class, 'GetDataCart'])->name('cart')->middleware('verified');
+    Route::post('/keranjang', [ShopCartController::class, 'AddToCart'])->middleware('verified'); //route untuk menambahkan pakaian custom ke keranjang
+    Route::post('/sabloncart', [ShopCartController::class, 'AddSablonToKeranjang'])->middleware('verified'); //route untuk menambahkan sablon ke keranjang
     Route::post('/addsablontocart', [ShopCartController::class, 'AddSablonToCart'])->name('addsablontocart');
 });
 Route::prefix('pilihbaju')->group(function () {

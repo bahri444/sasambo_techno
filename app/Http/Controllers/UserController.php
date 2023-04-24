@@ -100,14 +100,12 @@ class UserController extends Controller
                 'name' => $req->name,
                 'email' => $req->email,
                 'password' => Hash::make('password')
-                // 'password' => $req->password
             ]);
-            // dd($data);
             $data->save();
             return redirect('login')->with('success', 'registrasi berhasil');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return redirect('register')->with('message', 'register gagal');
+            return redirect('register')->with('message', $e);
         }
     }
 
@@ -130,7 +128,7 @@ class UserController extends Controller
             'email' => 'required',
             'password' => 'required'
         ]);
-        if (Auth::attempt($req->only('email', 'password'))) {
+        if (Auth::attempt($req->only('email', 'password')) && Auth::user()->email_verified_at != NULL) {
             if (Auth::user()->role == 'superadmin') {
                 return redirect('dashboard');
             } elseif (Auth::user()->role == 'kasir') {
@@ -140,8 +138,10 @@ class UserController extends Controller
             } elseif (Auth::user()->role == 'pelanggan') {
                 return redirect('home');
             } else {
-                print("anda tidak memiliki hak akses");
+                print_r("anda tidak memiliki hak akses");
             }
+        } elseif (Auth::user()->email_verified_at == NULL) {
+            return redirect('verified');
         }
         return back()->withErrors(['password', 'email atau password salah']);
     }

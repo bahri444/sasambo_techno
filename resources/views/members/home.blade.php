@@ -38,7 +38,7 @@
             @foreach($sablon as $val)
             @if($val->harga !=0)
             <div class="col">
-                <form action="/addtocart" method="post">
+                <form action="/sabloncart" method="post">
                     @csrf
                     <div class="card h-100 card-body shadow-sm">
                         <input type="hidden" name="user_id" value="{{Auth::user()->user_id}}">
@@ -62,16 +62,14 @@
                             </div>
                         </div>
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
-                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalBeli{{$val->sablon_id}}">
-                                <i class="fas fa-dollar-sign"></i>
-                                <button class="btn btn-outline-warning" type="submit"><i class="fas fa-cart-plus"></i></button>
+                            <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalBeli{{$val->sablon_id}}"><i class="fas fa-dollar-sign"></i></button>
+                            <button class="btn btn-outline-warning" type="submit"><i class="fas fa-cart-plus"></i></button>
                         </div>
                     </div>
                 </form>
             </div>
             @endif
 
-            <!-- user_id	sablon_id	kurir_id	payment_id	bdp	bl	jml	pay_status	stts_produksi	trx_status -->
             <!-- modal beli lngsung sablon -->
             <div class="modal fade" id="modalBeli{{$val->sablon_id}}" tabindex=" -1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">

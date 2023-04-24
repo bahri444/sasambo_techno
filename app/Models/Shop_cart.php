@@ -17,10 +17,10 @@ class Shop_cart extends Model
     {
         return $query->leftJoin('produk_custom', 'produk_custom.procus_id', '=', 'cart_shop.procus_id');
     }
-    public function scopeJoinToWarna($query)
-    {
-        return $query->leftJoin('warna', 'warna.warna_id', '=', 'cart_shop.warna_id');
-    }
+    // public function scopeJoinToWarna($query)
+    // {
+    //     return $query->leftJoin('warna', 'warna.warna_id', '=', 'cart_shop.warna_id');
+    // }
     public function scopeJoinTableSablon($query)
     {
         return $query->leftJoin('sablon', 'sablon.sablon_id', '=', 'cart_shop.sablon_id');

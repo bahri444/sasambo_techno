@@ -20,7 +20,7 @@ class ShopCartController extends Controller
     {
         $instansi = Instansi::select('logo')->get();
         $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 
-        $shopCartProduk = Shop_cart::joinProcus()->joinToWarna()->joinTableSablon()->orderBy('cart_id', 'desc')->get();
+        $shopCartProduk = Shop_cart::joinProcus()->joinTableSablon()->orderBy('cart_id', 'desc')->get();
         $kurir = Kurir::all();
         $payment = Payment::all();
         return view('members.mycart', [
@@ -33,47 +33,51 @@ class ShopCartController extends Controller
         ]);
     }
 
-    //funcsi untuk menambahkan produk custom dan sablon ke keranjang
+    //fungsi untuk menambahkan sablon ke keranjang
+    public function AddSablonToKeranjang(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required',
+            'sablon_id' => 'required',
+            'jumlah_order' => 'required',
+        ]);
+        try {
+            Shop_cart::create($request->all());
+            return redirect('/cart')->with('success', 'berhasil menambahkan sablon ke keranjang');
+        } catch (\Exception $e) {
+            Log::error($e->getMessage());
+            return redirect('/home')->with('errors', $e);
+        }
+    }
+
+    //fungsi untuk menambahkan produk custom ke keranjang
     public function AddToCart(Request $request)
     {
-        // kondisi untuk cek id sablon saat memasukkan ke keranjang
-        if ($request->sablon_id == true) {
-            $request->validate([
-                'user_id' => 'required',
-                'sablon_id' => 'required',
-                'jumlah_order' => 'required',
-            ]);
-            // kondisi untuk cek id pesanan saat memasukkan ke keranjang
-        } elseif ($request->procus_id == true) {
-            $request->validate([
-                'user_id' => 'required',
-                'procus_id' => 'required',
-                'size_order' => 'required',
-                'jumlah_order' => 'required',
-                'harga_satuan' => 'required',
-                'harga_totals' => 'required',
-            ]);
-        }
+        $request->validate([
+            'procus_id' => 'required',
+            'size_order' => 'required',
+            'jumlah_order' => 'required',
+            'harga_satuan' => 'required',
+            'harga_totals' => 'required',
+        ]);
         try {
             $tombolcart = new Shop_cart([
-                'user_id' => $request->user_id,
+                'user_id' => Auth::user()->user_id,
                 'procus_id' => $request->procus_id,
-                'sablon_id' => $request->sablon_id,
                 'size_order' => $request->size_order,
                 'jumlah_order' => $request->jumlah_order,
                 'harga_satuan' => $request->harga_satuan,
                 'harga_totals' => $request->harga_totals,
             ]);
-            // dd($tombolcart);
             $tombolcart->save();
-            return redirect('/cart')->with('success', 'berhasil menambahkan ke keranjang');
+            return response()->json(['success' => 'berhasil di tambah ke keranjang']);
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect('/home')->with('errors', 'gagal menambahkan ke keranjang');
         }
     }
 
-    // fungsi untuk checkout pakaian custom dan sablon dari keranjang
+    // fungsi untuk transaksi pakaian custom dan sablon dari keranjang
     public function TrxPakaiancustom(Request $request)
     {
         if ($request->procus_id == true) {
@@ -122,7 +126,7 @@ class ShopCartController extends Controller
         }
     }
 
-    // fungsi untuk menghapus satu barang dari keranjang belanja
+    // fungsi untuk menghapus satu barang dari keranjang belanja customer
     public function DelBarangOnKeranjang($id)
     {
         try {

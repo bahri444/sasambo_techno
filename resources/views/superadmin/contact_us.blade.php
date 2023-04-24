@@ -4,7 +4,7 @@
     <div class="page-title">
         <div class="row">
             <div class="col-12 col-md-6 order-md-1 order-last">
-                <h3>Contact us</h3>
+                <h3>Testimonial</h3>
                 <p class="text-subtitle text-muted">Selamat datang kembali {{Auth::user()->name}}</p>
             </div>
         </div>
@@ -34,7 +34,7 @@
                         <thead>
                             <tr>
                                 <th class="text-center">No</th>
-                                <th class="text-center">Nama</th>
+                                <th class="text-center">Nama lengkap</th>
                                 <th class="text-center">Email</th>
                                 <th class="text-center">Telepon</th>
                                 <th class="text-center">Aksi</th>
@@ -45,7 +45,7 @@
                             @foreach($contactus as $val)
                             <tr class="text-center">
                                 <td><?= $i++ ?></td>
-                                <td>{{$val->nama}}</td>
+                                <td>{{$val->nama_lengkap}}</td>
                                 <td>{{$val->email}}</td>
                                 <td>{{$val->telepon}}</td>
                                 <td>
@@ -91,7 +91,7 @@
                     <div class="row">
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Nama</label>
-                            <input type="text" class="form-control" name="nama" placeholder="masukkan nama" id="exampleFormControlInput1">
+                            <input type="text" class="form-control" name="nama_lengkap" placeholder="masukkan nama lengkap" id="exampleFormControlInput1">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Email</label>
@@ -121,7 +121,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">{{$row->nama}}</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">{{$row->nama_lengkap}}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -144,7 +144,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h1 class="modal-title fs-5" id="exampleModalLabel">Update saran {{$row->nama}}</h1>
+                <h1 class="modal-title fs-5" id="exampleModalLabel">Update saran {{$row->nama_lengkap}}</h1>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
@@ -154,7 +154,7 @@
                         <div class="mb-3">
                             <input type="hidden" name="contact_us_id" value="{{$row->contact_us_id}}" class="form-control">
                             <label for="exampleFormControlInput1" class="form-label">Nama</label>
-                            <input type="text" class="form-control" name="nama" value="{{$row->nama}}" id="exampleFormControlInput1">
+                            <input type="text" class="form-control" name="nama_lengkap" value="{{$row->nama_lengkap}}" id="exampleFormControlInput1">
                         </div>
                         <div class="mb-3">
                             <label for="exampleFormControlInput1" class="form-label">Email</label>

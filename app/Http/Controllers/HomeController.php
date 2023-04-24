@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ContactUs;
 use App\Models\Instansi;
 use App\Models\KategoriProduk;
 use App\Models\KtgrProcus;
@@ -12,6 +13,7 @@ use App\Models\Sablon;
 use App\Models\Tutorial;
 use App\Models\Video;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -75,7 +77,7 @@ class HomeController extends Controller
     {
         $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         $instansi = Instansi::all();
-        $video = Video::limit(8)->orderBy('video_id', 'desc')->get();
+        $video = Video::orderBy('video_id', 'desc')->limit(6)->get();
         return view('home.video', [
             'title' => 'video',
             'instansi' => $instansi,
@@ -88,9 +90,9 @@ class HomeController extends Controller
     {
         $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         $instansi = Instansi::all();
-        $procategori = KtgrProcus::joinToKategori()->get();
-        $sablon = Sablon::all();
-        $procus = ProdukCustom::joinKategoriProdukCostum()->get();;
+        $procategori = KtgrProcus::joinToKategori()->orderBy('ktgr_procus_id', 'desc')->limit(6)->get();
+        $sablon = Sablon::orderBy('sablon_id', 'desc')->limit(6)->get();
+        $procus = ProdukCustom::joinKategoriProdukCostum()->orderBy('procus_id', 'desc')->limit(6)->get();
         return view('home.produk', [
             'title' => 'produk',
             'kategoricustom' => $procategori,
@@ -101,14 +103,13 @@ class HomeController extends Controller
         ]);
     }
 
+    // get view contact us or testimonial
     public function SendToContact()
     {
         $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         $instansi = Instansi::all();
-        $produkCustom = ProdukCustom::all();
         return view('home.contact', [
             'title' => 'kontak',
-            // 'produk' => $produkCustomCustom,
             'instansi' => $instansi,
             'partnerperusahaan' => $partnerPerusahaan
         ]);

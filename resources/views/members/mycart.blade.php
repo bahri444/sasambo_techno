@@ -20,6 +20,7 @@
 <!-- lihat data produk yang ada di dalam keranjang anda -->
 @foreach($shopcartproduk as $row)
 @if(Auth::user()->user_id == $row->user_id)
+
 <!-- jika id produk custom tidak kosong -->
 @if($row->procus_id != NULL)
 <div class="card shadow-sm">

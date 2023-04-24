@@ -11,7 +11,6 @@ use App\Models\ProdukCustom;
 use App\Models\Sablon;
 use App\Models\Shop_cart;
 use App\Models\User;
-use App\Models\Warna;
 use Illuminate\Support\Facades\Auth;
 
 class RoleMemberController extends Controller
@@ -67,10 +66,10 @@ class RoleMemberController extends Controller
     public function DetailCustom($id)
     {
         $instansi = Instansi::all();
+        $partnerperusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         $data_produk_custom = ProdukCustom::joinWarna()->joinKategoriProdukCostum()->get();
         $get_size_with_nama_warna = ProdukCustom::joinWarna()->select('size', 'nama_warna')->get();
         $data_id_produk = $id;
-        $partnerperusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         return view('home.pilihbaju', [
             'instansi' => $instansi,
             'data_produk_custom_id' => $data_id_produk,
@@ -86,11 +85,15 @@ class RoleMemberController extends Controller
         $instansi = Instansi::select('logo')->get();
         $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
         $data_produk_custom = ProdukCustom::joinWarna()->joinKategoriProdukCostum()->get();
+        $jasa_kirim = Kurir::all();
+        $metode_pembayaran = Payment::all();
         $get_size_with_nama_warna = ProdukCustom::joinWarna()->select('size', 'nama_warna')->get();
         $data_id_produk = $produk_custom_id;
         return view('members.detailcustom', [
             'instansi' => $instansi,
             'isiKeranjang' => $isiKeranjang,
+            'jasaKirim' => $jasa_kirim,
+            'payment' => $metode_pembayaran,
             'data_produk_custom_id' => $data_id_produk,
             'data_produk_custom' => $data_produk_custom,
             'get_size_with_nama_warna' => $get_size_with_nama_warna

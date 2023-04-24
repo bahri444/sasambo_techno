@@ -51,15 +51,7 @@
     </div>
     <!-- end visi dan misi -->
 
-    <!-- pelayanan -->
     <div class="row mt-5">
-        <div class="page-header">
-            <div class="col-md-6 col-lg-5 col-sm-6 mx-auto text-center">
-                <h6 class="color__green">PELAYANAN KAMI</h6>
-                <p>sasambo techno merupakan jasa sablon dan jasa software terbaik di lombok</p>
-            </div>
-        </div>
-
         <!-- kategori software -->
         <div class="row justify-content-between p-3">
             <div class="page-header mb-3">
@@ -97,7 +89,7 @@
                     <div class="col-md-8 col-lg-6">
                         <div class="card-body">
                             <h5 class="card-title mt-3">{{$row->jenis_procus}}</h5>
-                            <p class="card-text style__font">{{$row->des_ktgrprocus}}</p>
+                            <p class="card-text style__font">{{$row->deskripsi_kategori_produk_custom}}</p>
                         </div>
                     </div>
                     <div class="col-md-4 col-lg-6">

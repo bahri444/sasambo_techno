@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 class ContactUs extends Model
 {
     use HasFactory;
-    protected $primaryKey = 'contact_us_id';
-    protected $fillable = ['nama',    'email',    'telepon',    'saran'];
+    protected $primaryKey = 'testimoni_id';
+    protected $fillable = ['nama_lengkap',    'email',    'telepon',    'saran', 'created_at', 'updated_at'];
     public $timestamps = false;
 }

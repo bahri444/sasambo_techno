@@ -8,14 +8,16 @@ use App\Models\Shop_cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class PesananController extends Controller
 {
+    // load data pesanan for all role user
     public function GetPesanan()
     {
         if (Auth::user()->role == 'superadmin') {
             $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->get();
+                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
             $instansi = Instansi::select('logo')->get();
             return view('superadmin.pesanan', [
                 'title' => 'pesanan pakaian custom',
@@ -24,7 +26,7 @@ class PesananController extends Controller
             ]);
         } elseif (Auth::user()->role == 'kasir') {
             $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->get();
+                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
             $instansi = Instansi::select('logo')->get();
             return view('superadmin.pesanan', [
                 'title' => 'pesanan pakaian custom',
@@ -33,7 +35,7 @@ class PesananController extends Controller
             ]);
         } elseif (Auth::user()->role == 'produksi') {
             $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->get();
+                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
             $instansi = Instansi::select('logo')->get();
             return view('superadmin.pesanan', [
                 'title' => 'pesanan pakaian custom',
@@ -57,93 +59,21 @@ class PesananController extends Controller
             echo '403 forbidden';
         }
     }
-    public function GetPesananSablon()
-    {
-        if (Auth::user()->role == 'superadmin') {
-            $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->get();
-            $instansi = Instansi::select('logo')->get();
-            return view('superadmin.pesanan_sablon', [
-                'title' => 'pesanan pakaian custom',
-                'instansi' => $instansi,
-                'pesanan' => $data,
-            ]);
-        } elseif (Auth::user()->role == 'kasir') {
-            $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->get();
-            $instansi = Instansi::select('logo')->get();
-            return view('superadmin.pesanan_sablon', [
-                'title' => 'pesanan pakaian custom',
-                'instansi' => $instansi,
-                'pesanan' => $data,
-            ]);
-        } elseif (Auth::user()->role == 'produksi') {
-            $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->get();
-            $instansi = Instansi::select('logo')->get();
-            return view('superadmin.pesanan_sablon', [
-                'title' => 'pesanan pakaian custom',
-                'instansi' => $instansi,
-                'pesanan' => $data,
-            ]);
-        } elseif (Auth::user()->role == 'pelanggan') {
-            $instansi = Instansi::select('logo', 'whatsapp')->get();
-            $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
 
-            $dataPesanan = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
-            // dd($dataPesanan);
-            return view('members.pesananAnda', [
-                'title' => 'history transaksi',
-                'instansi' => $instansi,
-                'data_pesanan' => $dataPesanan,
-                'isiKeranjang' => $isiKeranjang,
-            ]);
-        } else {
-            echo '403 forbidden';
-        }
-    }
-
-    // pesan langsung dari halaman detail produk custom
+    // pesan sablon secara langsung dari halaman home
     public function AddPesanan(Request $req)
     {
-        if ($req->procus_id == true) {
-            $req->validate([
-                'procus_id' => 'required',
-                'color' => 'required',
-                'user_id' => 'required',
-                'size_order' => 'required',
-                'kurir_id' => 'required',
-                'payment_id' => 'required',
-                'jml_order' => 'required',
-                't_pesan' => 'required',
-                'tgl_order' => 'required',
-            ]);
-        } elseif ($req->sablon_id == true) {
-            $req->validate([
-                'user_id' => 'required',
-                'sablon_id' => 'required',
-                'kurir_id' => 'required',
-                'payment_id' => 'required',
-                'jml_order' => 'required',
-                't_pesan' => 'required',
-                'tgl_order' => 'required',
-            ]);
-        }
+        $req->validate([
+            'user_id' => 'required',
+            'sablon_id' => 'required',
+            'kurir_id' => 'required',
+            'payment_id' => 'required',
+            'jml_order' => 'required',
+            't_pesan' => 'required',
+            'tgl_order' => 'required',
+        ]);
         try {
-            $data = new Pesanan([
-                'procus_id' => $req->procus_id,
-                'user_id' => $req->user_id,
-                'sablon_id' => $req->sablon_id,
-                'size_orders' => $req->size_order,
-                'kurir_id' => $req->kurir_id,
-                'payment_id' => $req->payment_id,
-                'jml_order' => $req->jml_order,
-                't_pesan' => $req->t_pesan,
-                'tgl_order' => $req->tgl_order,
-            ]);
-            // dd($data);
-            $data->save();
+            Pesanan::create($req->all());
             return redirect('pesanananda')->with('success', 'pesanan berhasil');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -151,6 +81,7 @@ class PesananController extends Controller
         }
     }
 
+    // function bayar DP produk custom atau sablon
     public function BayarProdukCustom(Request $req)
     {
         $req->validate([
@@ -175,6 +106,7 @@ class PesananController extends Controller
         }
     }
 
+    // function bayar lunas atau bayar cash produk custom dan sablon
     public function BayarLunas(Request $req)
     {
         $req->validate([
@@ -199,6 +131,7 @@ class PesananController extends Controller
         }
     }
 
+    // function validasi pesanan oleh kasir
     public function ValidasiPesanan(Request $req)
     {
         $req->validate([
@@ -218,6 +151,7 @@ class PesananController extends Controller
         }
     }
 
+    // validasi pesanan oleh produksi
     public function ValidasiProduction(Request $req)
     {
         $req->validate([
@@ -235,6 +169,7 @@ class PesananController extends Controller
         }
     }
 
+    // function input diskon oleh kasir
     public function Discount(Request $req)
     {
         $req->validate([
@@ -275,6 +210,7 @@ class PesananController extends Controller
         }
     }
 
+    // function delete pesanan oleh super admin
     public function DeletePesanan($id)
     {
         try {
@@ -284,5 +220,45 @@ class PesananController extends Controller
             Log::error($e->getMessage());
             return redirect('pesanan')->with('success', 'pesanan gagal di hapus');
         }
+    }
+
+    // checkout now on halaman detail produk custom
+    public function CheckoutNow(Request $req)
+    {
+        $roles = [
+            'data.procus_id' => 'required',
+            'data.size_order' => 'required',
+            'data.jumlah_order' => 'required',
+            'data.harga_totals' => 'required',
+            'data_jasa.kurir_id' => 'required',
+            'data_jasa.payment_id' => 'required',
+            'data_jasa.t_pesan' => 'required',
+        ];
+        $messages = [
+            'data.procus_id.required' => 'produk tidak boleh kosong',
+            'data.size_order.required' => 'ukuran tidak boleh kosong',
+            'data.jumlah_order.required' => 'jumlah order tidak boleh kosong',
+            'data.harga_totals.required' => 'harga total tidak boleh kosong',
+            'data_jasa.kurir_id.required' => 'kurir tidak boleh kosong',
+            'data_jasa.payment_id.required' => 'metode pembayaran tidak boleh kosong',
+            'data_jasa.t_pesan.required' => 'pesan tidak boleh kosong',
+        ];
+        $validasi = Validator::make($req->all(), $roles, $messages);
+        if ($validasi->fails()) {
+            return response()->json(['errors' => $validasi->errors()]);
+        }
+
+        $pesananNow = new Pesanan();
+        $pesananNow->procus_id = $req->data['procus_id'];
+        $pesananNow->user_id = Auth::user()->user_id;
+        $pesananNow->size_orders = $req->data['size_order'];
+        $pesananNow->jml_order = $req->data['jumlah_order'];
+        $pesananNow->all_total = $req->data['harga_totals'];
+        $pesananNow->kurir_id = $req->data_jasa['kurir_id'];
+        $pesananNow->payment_id = $req->data_jasa['payment_id'];
+        $pesananNow->t_pesan = $req->data_jasa['t_pesan'];
+        $pesananNow->tgl_order = date('Y-m-d');
+        $pesananNow->save();
+        return response()->json(['success' => 'berhasil di checkout']);
     }
 }

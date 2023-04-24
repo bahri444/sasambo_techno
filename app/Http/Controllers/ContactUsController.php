@@ -11,7 +11,7 @@ class ContactUsController extends Controller
 {
     public function GetContactUs()
     {
-        $instansi = Instansi::select('logo');
+        $instansi = Instansi::select('logo')->get();
         $contact = ContactUs::all();
         return view('superadmin.contact_us', [
             'title' => 'kritik dan saran',
@@ -24,19 +24,13 @@ class ContactUsController extends Controller
     public function Comment(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'email' => 'required',
-            'telepon' => 'required',
+            'nama_lengkap' => 'required|max:30',
+            'email' => 'required|max:35',
+            'telepon' => 'required|max:12',
             'saran' => 'required',
         ]);
         try {
-            $data = new ContactUs([
-                'nama' => $request->nama,
-                'email' => $request->email,
-                'telepon' => $request->telepon,
-                'saran' => $request->saran,
-            ]);
-            $data->save();
+            ContactUs::create($request->all());
             return redirect('contact')->with('success', 'saran berhasil di kirim');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -48,19 +42,13 @@ class ContactUsController extends Controller
     public function AddComment(Request $request)
     {
         $request->validate([
-            'nama' => 'required',
-            'email' => 'required',
-            'telepon' => 'required',
+            'nama_lengkap' => 'required|max:30',
+            'email' => 'required|max:35',
+            'telepon' => 'required|max:12',
             'saran' => 'required',
         ]);
         try {
-            $data = new ContactUs([
-                'nama' => $request->nama,
-                'email' => $request->email,
-                'telepon' => $request->telepon,
-                'saran' => $request->saran,
-            ]);
-            $data->save();
+            ContactUs::create($request->all());
             return redirect('contactus')->with('success', 'saran berhasil di kirim');
         } catch (\Exception $e) {
             Log::error($e->getMessage());

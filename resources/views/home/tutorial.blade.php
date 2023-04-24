@@ -1,8 +1,8 @@
 @include('layout.header')
 <div class="container">
     <div class="text-center mt-3 mb-2">
-        <h2>Artikel</h2>
-        <p>Artikel dan e book</p>
+        <h2 class="color__green">Artikel</h2>
+        <p class="color__green">Artikel dan e book</p>
     </div>
     <div class="row row-cols-1 row-cols-md-3 g-4 mt-5">
         @foreach($tutorials as $row)

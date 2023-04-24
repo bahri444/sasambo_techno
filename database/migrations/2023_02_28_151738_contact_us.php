@@ -13,7 +13,13 @@ return new class extends Migration
      */
     public function up()
     {
-        //
+        Schema::create('contact_us', function (Blueprint $table) {
+            $table->id('testimoni_id');
+            $table->char('nama_lengkap', 30);
+            $table->char('emiail', 35);
+            $table->char('telepon', 12);
+            $table->longText('saran');
+        });
     }
 
     /**
@@ -23,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        //
+        Schema::drop('contact_us');
     }
 };
