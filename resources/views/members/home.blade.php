@@ -41,7 +41,7 @@
                 <form action="/sabloncart" method="post">
                     @csrf
                     <div class="card h-100 card-body shadow-sm">
-                        <input type="hidden" name="user_id" value="{{Auth::user()->user_id}}">
+                        <input type="hidden" name="user_id" value="{{Auth::user()->id}}">
                         <input type="hidden" name="sablon_id" value="{{$val->sablon_id}}">
                         <input type="hidden" name="jumlah_order" value="1">
                         <div class="row">
@@ -61,10 +61,14 @@
                                     <input type="hidden" value="{{$val->harga}}">
                             </div>
                         </div>
+                        @if(Auth::user()->telepon != NULL)
                         <div class="d-grid gap-2 d-md-flex justify-content-md-center mt-4">
                             <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalBeli{{$val->sablon_id}}"><i class="fas fa-dollar-sign"></i></button>
                             <button class="btn btn-outline-warning" type="submit"><i class="fas fa-cart-plus"></i></button>
                         </div>
+                        @elseif(Auth::user()->telepon == NULL)
+                        <p class="text text-danger">lengkapi data terlebih dahulu agar bisa melakukan transaksi</p>
+                        @endif
                     </div>
                 </form>
             </div>
@@ -83,7 +87,7 @@
                                 @csrf
                                 <div class="row">
                                     <div class="col-12 mb-3">
-                                        <input type="hidden" class="form-control" name="user_id" value="{{Auth::user()->user_id}}">
+                                        <input type="hidden" class="form-control" name="user_id" value="{{Auth::user()->id}}">
                                         <input type="hidden" class="form-control" name="sablon_id" value="{{$val->sablon_id}}" aria-label="default input example" autofocus>
                                     </div>
                                     <!-- input id metode pembayaran -->
@@ -106,17 +110,16 @@
                                         </select>
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <h6>Jumlah</h6>
-                                        <!-- <input type="number" id="jml_order_langsung" name="jml_order" class="form-control"> -->
-                                        <input type="number" id="jml_order_langsung" name="jml_order" onchange="jmlOrderLangsung()" class="form-control">
+                                        <h6>Jumlah order</h6>
+                                        <input type="number" name="jml_order" id="jml_order" class="form-control" data-value="<?= $val->harga; ?>" placeholder="masukkan jumlah order">
                                     </div>
                                     <div class="col-12 mb-3">
-                                        <h6>Harga satuan Rp. {{$val->harga}}</h6>
-                                        <input type="hidden" id="harga_satuan_langsung" data-ordersablon="{{$val->harga}}">
+                                        <h6>Harga satuan</h6>
+                                        <input type="text" id="harga_satuan_sablon" value="{{$val->harga}}" class="form-control" readonly>
                                     </div>
                                     <div class="col-12 mb-3">
                                         <h6>Total</h6>
-                                        <p id="harga_total_sablon"></p>
+                                        <input type="text" name="harga_totals" id="harga_total_sablon" value="" class="form-control" readonly>
                                     </div>
                                     <div class="col-12 mt-3">
                                         <div class="card-header">Tinggalkan pesan</div>
@@ -180,14 +183,12 @@
 <!-- end produk custom -->
 
 <script>
-    function jmlOrderLangsung() {
-        let getJumlahOrderLangsung = document.getElementById('jumlah_order_langsung');
-        let gethargaSatuanLangsung = document.getElementById('harga_satuan_langsung').getAttribute('data-ordersablon');
-        console.log(gethargaSatuanLangsung);
-        console.log(getJumlahOrderLangsung);
-        let TotalHargaLangsung = getJumlahOrderLangsung * gethargaSatuanLangsung;
-        document.getElementById('harga_total_langsung').innerHTML = "Rp. " + TotalHargaLangsung;
-    }
+    $('form #jml_order').on('keyup', function() {
+        let totalOrder = $(this).val();
+        let hargaSatuan = $(this).attr('data-value');
+        let totalHarga = totalOrder * hargaSatuan;
+        $('form #harga_total_sablon').val(totalHarga);
+    });
 </script>
 
 @endsection

@@ -14,10 +14,9 @@ return new class extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id('user_id');
+            $table->id();
             $table->string('name');
             $table->string('email')->unique();
-            $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->enum('role', ['superadmin', 'kasir', 'produksi', 'pelanggan'])->default('pelanggan');
             $table->string('telepon', 14)->nullable();
@@ -26,7 +25,9 @@ return new class extends Migration
             $table->string('kecamatan', 30)->nullable();
             $table->string('kabupaten', 30)->nullable();
             $table->string('provinsi', 35)->nullable();
-            $table->rememberToken();
+            $table->timestamp('email_verified_at')->nullable();
+            $table->boolean('is_email_verified')->default(0);
+            $table->string('token');
             $table->timestamps();
         });
     }

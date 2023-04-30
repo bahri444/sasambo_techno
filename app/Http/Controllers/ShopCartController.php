@@ -19,7 +19,7 @@ class ShopCartController extends Controller
     public function GetDataCart()
     {
         $instansi = Instansi::select('logo')->get();
-        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 
+        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 
         $shopCartProduk = Shop_cart::joinProcus()->joinTableSablon()->orderBy('cart_id', 'desc')->get();
         $kurir = Kurir::all();
         $payment = Payment::all();
@@ -41,6 +41,7 @@ class ShopCartController extends Controller
             'sablon_id' => 'required',
             'jumlah_order' => 'required',
         ]);
+        // dd($request);
         try {
             Shop_cart::create($request->all());
             return redirect('/cart')->with('success', 'berhasil menambahkan sablon ke keranjang');
@@ -62,7 +63,7 @@ class ShopCartController extends Controller
         ]);
         try {
             $tombolcart = new Shop_cart([
-                'user_id' => Auth::user()->user_id,
+                'user_id' => Auth::user()->id,
                 'procus_id' => $request->procus_id,
                 'size_order' => $request->size_order,
                 'jumlah_order' => $request->jumlah_order,

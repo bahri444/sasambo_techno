@@ -48,7 +48,7 @@ class Pesanan extends Model
 
     public function scopeJoinToUser($query)
     {
-        return $query->leftJoin('users', 'users.user_id', '=', 'pesanan.user_id');
+        return $query->leftJoin('users', 'users.id', '=', 'pesanan.user_id');
     }
 
     public function scopeJoinToKurir($query)
@@ -62,5 +62,10 @@ class Pesanan extends Model
     public function scopeJoinToSablon($query)
     {
         return $query->leftJoin('sablon', 'sablon.sablon_id', '=', 'pesanan.sablon_id');
+    }
+
+    public function getEkspedisiDanDiskon()
+    {
+        return $this->hasOne(EkspedisiDanDiskon::class, 'pesanan_id', 'pesanan_id');
     }
 }

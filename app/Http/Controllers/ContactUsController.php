@@ -78,6 +78,7 @@ class ContactUsController extends Controller
             return redirect('contactus')->with('success', 'saran gagal di update');
         }
     }
+
     public function DelContactUs($id)
     {
         try {

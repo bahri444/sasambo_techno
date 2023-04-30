@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ContactUs;
 use App\Models\Instansi;
 use App\Models\KategoriProduk;
 use App\Models\KtgrProcus;
@@ -13,11 +12,11 @@ use App\Models\Sablon;
 use App\Models\Tutorial;
 use App\Models\Video;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
-class HomeController extends Controller
+class LandingPageController extends Controller
 {
-    public function SendToIndex()
+    //
+    public function Index()
     {
         $instansi = Instansi::all();
         $ktgrprdk = KategoriProduk::all();

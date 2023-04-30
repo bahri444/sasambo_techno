@@ -203,10 +203,8 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col">
-                        <div class="form-group">
-                            <p class="style__font">{{$in->alamat}}</p>
-                        </div>
+                    <div class="col-10 mx-auto">
+                        <iframe src="{{$in->alamat}}" width="100%" height="250" style="border:10;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
                     </div>
                 </div>
                 <div class="row">

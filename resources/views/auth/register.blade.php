@@ -16,7 +16,7 @@
                             <h4 class="color__green">Register akun</h4>
                         </div>
                         <div class="container">
-                            <form action="addRegister" method="post">
+                            <form action="{{route('register-post')}}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="form-group mt-2">

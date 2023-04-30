@@ -6,14 +6,18 @@ use App\Models\Instansi;
 use App\Models\Partner;
 use App\Models\Shop_cart;
 use App\Models\User;
+use App\Models\UserVerify;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Str;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     // get data user return to view admin
     public function GetAlluser()
@@ -28,7 +32,7 @@ class UserController extends Controller
             ]);
         } elseif (Auth::user()->role == 'pelanggan') {
 
-            $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
+            $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
             $instansi = Instansi::select('logo')->get();
             $user = User::all();
             return view('members.profile', [
@@ -66,17 +70,42 @@ class UserController extends Controller
             return redirect('user')->with('errors', 'register gagal');
         }
     }
-    // get data user with json
-    // public function GetAll()
-    // {
-    //     $user = User::all();
-    //     return response()->json([
-    //         'users' => $user
-    //     ]);
-    // }
 
-    // get view register
-    public function GetRegister()
+    public function GetViewLogin()
+    {
+        $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
+        $data = Instansi::all();
+        return view('auth.login', [
+            'title' => 'halaman login',
+            'instansi' => $data,
+            'partnerperusahaan' => $partnerPerusahaan
+        ]);
+    }
+    public function AuthLogin(Request $request)
+    {
+        $request->validate([
+            'email' => 'required',
+            'password' => 'required',
+        ]);
+        // dd($request);
+        $data = $request->only('email', 'password');
+        if (Auth::attempt($data)) {
+            if (Auth::user()->role == 'superadmin') {
+                return redirect()->intended('/dashboard')->withSuccess('anda berhasil login');
+            } elseif (Auth::user()->role == 'kasir') {
+                return redirect()->intended('/index')->withSuccess('anda berhasil login');
+            } elseif (Auth::user()->role == 'produksi') {
+                return redirect()->intended('/pesanan')->withSuccess('anda berhasil login');
+            } elseif (Auth::user()->role == 'pelanggan') {
+                return redirect()->intended('/home')->withSuccess('anda berhasil login');
+            } else {
+                print_r("anda tidak memiliki hak akses");
+            }
+        }
+        return redirect('login')->withSuccess('invalid username or password');
+    }
+
+    public function GetViewRegister()
     {
         $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
         $data = Instansi::all();
@@ -87,71 +116,53 @@ class UserController extends Controller
         ]);
     }
 
-    // function for send data register to database
-    public function PostRegister(Request $req)
+    public function RegisterPost(Request $request)
     {
-        $req->validate([
-            'name' => 'required|max:25',
-            'email' => 'required|unique:users',
-            'password' => 'required|min:6'
+        $request->validate([
+            'name' => 'required',
+            'email' => 'required|email|unique:users',
+            'password' => 'required|min:6',
         ]);
-        try {
-            $data = new User([
-                'name' => $req->name,
-                'email' => $req->email,
-                'password' => Hash::make('password')
+        // dd($request);
+        $token = Str::random(64);
+        $data = new User([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'token' => $token,
+        ]);
+        $data->save();
+        Mail::send('email.emailVerification', ['token' => $token], function ($message) use ($request) {
+            $message->to($request->email);
+            $message->subject('silahkan verifikasi email anda');
+        });
+        return redirect('/login')->withSuccess('berhasil registrasi');
+    }
+
+    public function Home()
+    {
+        if (Auth::check()) {
+            return view('members.home', [
+                'title' => 'home'
             ]);
-            $data->save();
-            return redirect('login')->with('success', 'registrasi berhasil');
+        }
+        return redirect('login')->withSuccess('silahkan login dulu');
+    }
+
+    public function VerifyAccount($token)
+    {
+        try {
+            $date_time = Carbon::now()->toDateTimeString();
+            $data = array(
+                'is_email_verified' => 1,
+                'email_verified_at' => $date_time,
+            );
+            User::where('token', '=', $token)->update($data);
+            return redirect()->route('login')->with('message', 'verifikasi berhasil');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
-            return redirect('register')->with('message', $e);
+            return redirect()->route('login')->with('errors', 'verifikasi gagal');
         }
-    }
-
-    // funtion for get view login
-    public function GetLogin()
-    {
-        $partnerPerusahaan = Partner::select('nama_prshn', 'logo_prshn')->get();
-        $data = Instansi::all();
-        return view('auth.login', [
-            'title' => 'halaman login',
-            'instansi' => $data,
-            'partnerperusahaan' => $partnerPerusahaan
-        ]);
-    }
-
-    // funtion for authentication login user email
-    public function AuthLogin(Request $req)
-    {
-        $req->validate([
-            'email' => 'required',
-            'password' => 'required'
-        ]);
-        if (Auth::attempt($req->only('email', 'password')) && Auth::user()->email_verified_at != NULL) {
-            if (Auth::user()->role == 'superadmin') {
-                return redirect('dashboard');
-            } elseif (Auth::user()->role == 'kasir') {
-                return redirect('index');
-            } elseif (Auth::user()->role == 'produksi') {
-                return redirect('pesanan');
-            } elseif (Auth::user()->role == 'pelanggan') {
-                return redirect('home');
-            } else {
-                print_r("anda tidak memiliki hak akses");
-            }
-        } elseif (Auth::user()->email_verified_at == NULL) {
-            return redirect('verified');
-        }
-        return back()->withErrors(['password', 'email atau password salah']);
-    }
-
-    // funtion for logout
-    public function Logout()
-    {
-        Session::flush();
-        Auth::logout();
-        return redirect('/');
     }
 
     // function for change role
@@ -160,12 +171,11 @@ class UserController extends Controller
         $req->validate([
             'role' => 'required'
         ]);
-        // dd($req);
         try {
             $data = array(
                 'role' => $req->post('role')
             );
-            User::where('user_id', '=', $req->post('user_id'))->update($data);
+            User::where('id', '=', $req->post('id'))->update($data);
             return redirect('user')->with('success', 'hak akses berhasil di edit..!');
         } catch (Exception $e) {
             Log::error($e->getMessage());
@@ -193,7 +203,7 @@ class UserController extends Controller
                 'kabupaten' => $req->post('kabupaten'),
                 'provinsi' => $req->post('provinsi'),
             );
-            User::where('user_id', '=', $req->post('user_id'))->update($data);
+            User::where('id', '=', $req->post('id'))->update($data);
             return redirect('profile')->with('success', 'data berhasil di simpan');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -204,7 +214,7 @@ class UserController extends Controller
     public function Delete($id)
     {
         try {
-            User::where('user_id', '=', $id)->delete();
+            User::where('id', '=', $id)->delete();
             return redirect('user')->with('success', 'akun berhasil di hapus..!');
         } catch (Exception $e) {
             Log::error($e->getMessage());
@@ -216,11 +226,18 @@ class UserController extends Controller
     public function GetForm()
     {
         $instansi = Instansi::select('logo')->get();
-        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
+        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
         return view('members.getFormProfile', [
             'title' => 'lengkapi akun',
             'instansi' => $instansi,
             'isiKeranjang' => $isiKeranjang,
         ]);
+    }
+
+    public function logout()
+    {
+        Session::flush();
+        Auth::logout();
+        return redirect('/');
     }
 }

@@ -21,7 +21,7 @@
                                 @endif
                             </div>
                             @foreach($users as $val)
-                            @if(Auth::user()->user_id == $val->user_id)
+                            @if(Auth::user()->id == $val->id)
                             <div class="row">
                                 <div class="col-md-4 mb-3">
                                     <h6>Nama lengkap</h6>
@@ -76,7 +76,7 @@
                             </div>
                             <!-- Button update modal -->
                             <div class="d-grid gap-1 col-6 mx-auto">
-                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalUpdate{{$val->user_id}}">
+                                <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalUpdate{{$val->id}}">
                                     Update Profile
                                 </button>
                             </div>
@@ -92,7 +92,7 @@
 
 <!-- modal update akun -->
 @foreach($users as $us)
-<div class="modal fade" id="modalUpdate{{$us->user_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalUpdate{{$us->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -104,7 +104,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <input type="hidden" name="user_id" value="{{$us->user_id}}" class="form-control">
+                            <input type="hidden" name="id" value="{{$us->id}}" class="form-control">
                             <h6>Telepon</h6>
                             <input class="form-control" type="text" name="telepon" value="{{$us->telepon}}" aria-label="default input example" id="Success">
                         </div>

@@ -3,15 +3,12 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-// use Illuminate\Support\Facades\Hash;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -20,11 +17,12 @@ class User extends Authenticatable implements MustVerifyEmail
      *
      * @var array<int, string>
      */
-    protected $table = 'users';
-    protected $primaryKey = "user_id";
+    // // tidak boleh mendeklarasikan primary atau foreign key agar token bisa di generate dan primarykey harus default (id)
     protected $fillable = [
         'name',
         'email',
+        'is_email_verified',
+        'token',
         'password',
         'role',
         'telepon',
@@ -55,10 +53,4 @@ class User extends Authenticatable implements MustVerifyEmail
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
-
-    // implements set atribut password
-    // public function setPassswordAttribute($data)
-    // {
-    //     $this->attributes["password"] = Hash::make($data);
-    // }
 }

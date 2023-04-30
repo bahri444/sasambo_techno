@@ -20,12 +20,11 @@ return new class extends Migration
             $table->foreignId('sablon_id')->nullable();
             $table->char('size_order', 10)->nullable();
             $table->integer('jumlah_order')->length(10)->unsigned();
-            $table->double('harga_satuan');
+            $table->double('harga_satuan')->nullable();
             $table->double('harga_totals')->nullable();
-            // $table->longText('tinggalkanpesan');
             $table->timestamps();
 
-            $table->foreign('user_id')->references('user_id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('procus_id')->references('procus_id')->on('produk_custom')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('sablon_id')->references('sablon_id')->on('sablon')->cascadeOnUpdate()->cascadeOnDelete();
         });

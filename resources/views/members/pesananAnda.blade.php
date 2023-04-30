@@ -19,7 +19,7 @@
         <!-- end-alert -->
 
         @foreach($data_pesanan as $pes)
-        @if(Auth::user()->user_id == $pes->user_id && $pes->sablon_id == TRUE)
+        @if(Auth::user()->id == $pes->user_id && $pes->sablon_id == TRUE)
         <!-- view read transaction sablon -->
         <div class="card">
             <div class="card-body shadow-sm">
@@ -113,61 +113,132 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Nama pembeli</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$pes->name}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Ukuran sablon</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$pes->ukuran_sablon}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Jasa kirim</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$pes->nama_jakir}} {{$pes->jenis_jakir}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Metode pembayaran</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$pes->pay_method}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Jumlah order</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$pes->jml_order}} / titik</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Harga satuan</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$pes->harga}}</p>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
-                                <h6>Harga total</h6>
+
+                        <!-- logic diskon -->
+                        <?php if ($pes->getEkspedisiDandiskon != NULL) : ?>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Harga total</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. <?= $total_harga = ($pes->jml_order * $pes->harga) ?> </p>
+                                </div>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
-                                <p>: Rp. <?= $total_harga = ($pes->jml_order * $pes->harga) ?> </p>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Berat paket</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: {{$pes->getEkspedisiDandiskon->berat_paket}} - {{$pes->getEkspedisiDandiskon->satuan_berat}}</p>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Tarif pengiriman</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$pes->getEkspedisiDandiskon->tarif}} / {{$pes->getEkspedisiDandiskon->satuan_berat}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Total Biaya Ekspedisi</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$pes->getEkspedisiDandiskon->total_ekspedisi}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Persentase diskon</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: {{$pes->getEkspedisiDandiskon->persentase_diskon}} %</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Perolehan diskon</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$pes->getEkspedisiDandiskon->perolehan_diskon}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Harga setelah diskon</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$pes->getEkspedisiDandiskon->total_diskon}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Total tagihan pesanan</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <h6 class="text text-danger">: Rp. {{$pes->getEkspedisiDandiskon->total_semua_pesanan}}</h6>
+                                </div>
+                            </div>
+                        <?php elseif ($pes->getEkspedisiDandiskon == NULL) : ?>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Harga total</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. <?= $total_harga = ($pes->jml_order * $pes->harga) ?> </p>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <!-- end-logic diskon -->
+
                         <!-- status pesanan -->
                         <div class="row">
                             @if($pes->status_pesanan == 'diterima')
@@ -268,7 +339,7 @@
 
     <div class="row">
         @foreach($data_pesanan as $vals)
-        @if(Auth::user()->user_id == $vals->user_id && $vals->procus_id == TRUE)
+        @if(Auth::user()->id == $vals->user_id && $vals->procus_id == TRUE)
 
         <!-- view read transaction pakaian custom -->
         <div class="card">
@@ -367,61 +438,130 @@
                     </div>
                     <div class="modal-body">
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Nama pembeli</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$vals->name}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Jasa kirim</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$vals->nama_jakir}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Metode pembayaran</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$vals->pay_method}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Harga satuan</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$vals->harga_satuan}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Jumlah order</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$vals->jml_order}}/{{$vals->satuan}}</p>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
+                            <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
                                 <h6>Tanggal order</h6>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
+                            <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
                                 <p>: {{$vals->tgl_order}}</p>
                             </div>
                         </div>
-                        <div class="row">
-                            <div class="col-md-4 col-lg-6 col-sm-6 mb-3">
-                                <h6>Harga total</h6>
+                        <!-- logic diskon -->
+                        <?php if ($vals->getEkspedisiDandiskon != NULL) : ?>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Harga total</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. <?= $total_harga = ($vals->jml_order * $vals->harga_satuan) ?></p>
+                                </div>
                             </div>
-                            <div class="col-md-3 col-lg-5 col-sm-6 mb-3">
-                                <p>: Rp. <?= $total_harga = ($vals->jml_order * $vals->harga_satuan) ?></p>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Berat paket</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: {{$vals->getEkspedisiDandiskon->berat_paket}} - {{$vals->getEkspedisiDandiskon->satuan_berat}}</p>
+                                </div>
                             </div>
-                        </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Tarif pengiriman</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$vals->getEkspedisiDandiskon->tarif}} / {{$vals->getEkspedisiDandiskon->satuan_berat}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Total Biaya Ekspedisi</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$vals->getEkspedisiDandiskon->total_ekspedisi}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Persentase diskon</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: {{$vals->getEkspedisiDandiskon->persentase_diskon}} %</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Perolehan diskon</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$vals->getEkspedisiDandiskon->perolehan_diskon}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Harga setelah diskon</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. {{$vals->getEkspedisiDandiskon->total_diskon}}</p>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Total tagihan pesanan</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <h6 class="text text-danger">: Rp. {{$vals->getEkspedisiDandiskon->total_semua_pesanan}}</h6>
+                                </div>
+                            </div>
+                        <?php elseif ($vals->getEkspedisiDandiskon == NULL) : ?>
+                            <div class="row">
+                                <div class="col-md-4 col-lg-6 col-sm-6 mb-1">
+                                    <h6>Harga total</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-5 col-sm-6 mb-1">
+                                    <p>: Rp. <?= $total_harga = ($vals->jml_order * $vals->harga_satuan) ?></p>
+                                </div>
+                            </div>
+                        <?php endif; ?>
+                        <!-- end-logic diskon -->
 
                         <!-- status pesanan -->
                         <div class="row">

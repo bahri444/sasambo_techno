@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\EkspedisiDanDiskon;
 use App\Models\Instansi;
 use App\Models\Pesanan;
 use App\Models\Shop_cart;
@@ -15,28 +16,10 @@ class PesananController extends Controller
     // load data pesanan for all role user
     public function GetPesanan()
     {
-        if (Auth::user()->role == 'superadmin') {
-            $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
+        if (Auth::user()->role == 'superadmin' || Auth::user()->role == 'kasir' || Auth::user()->role == 'produksi') {
             $instansi = Instansi::select('logo')->get();
-            return view('superadmin.pesanan', [
-                'title' => 'pesanan pakaian custom',
-                'instansi' => $instansi,
-                'pesanan' => $data,
-            ]);
-        } elseif (Auth::user()->role == 'kasir') {
             $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
-            $instansi = Instansi::select('logo')->get();
-            return view('superadmin.pesanan', [
-                'title' => 'pesanan pakaian custom',
-                'instansi' => $instansi,
-                'pesanan' => $data,
-            ]);
-        } elseif (Auth::user()->role == 'produksi') {
-            $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
-            $instansi = Instansi::select('logo')->get();
+                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->with('getEkspedisiDanDiskon')->orderBy('pesanan_id', 'desc')->get();
             return view('superadmin.pesanan', [
                 'title' => 'pesanan pakaian custom',
                 'instansi' => $instansi,
@@ -44,11 +27,9 @@ class PesananController extends Controller
             ]);
         } elseif (Auth::user()->role == 'pelanggan') {
             $instansi = Instansi::select('logo', 'whatsapp')->get();
-            $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
-
+            $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
             $dataPesanan = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
-                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->orderBy('pesanan_id', 'desc')->get();
-            // dd($dataPesanan);
+                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->with('getEkspedisiDanDiskon')->orderBy('pesanan_id', 'desc')->get();
             return view('members.pesananAnda', [
                 'title' => 'history transaksi',
                 'instansi' => $instansi,
@@ -169,19 +150,36 @@ class PesananController extends Controller
         }
     }
 
+    // function get view ekspedisi dan diskon
+    public function GetViewEkspedisiDanPesanan($pesanan_id)
+    {
+        $instansi = Instansi::select('logo')->get();
+        $data = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
+            ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->with('getEkspedisiDanDiskon')->orderBy('pesanan_id', 'desc')->get();
+        return view('superadmin.formdiskondanekspedisi', [
+            'title' => 'ekspedisi dan diskon',
+            'instansi' => $instansi,
+            'pesanan_id' => $pesanan_id,
+            'pesanan' => $data,
+        ]);
+    }
+
     // function input diskon oleh kasir
-    public function Discount(Request $req)
+    public function EkspedisiDanDiskon(Request $req)
     {
         $req->validate([
-            '' => '',
+            'pesanan_id' => 'required',
+            'berat_paket' => 'required|max:8',
+            'tarif' => 'required',
+            'total_ekspedisi' => 'required',
+            'persentase_diskon' => 'required',
+            'perolehan_diskon' => 'required',
+            'total_diskon' => 'required',
+            'total_semua_pesanan' => 'required',
         ]);
+        // dd($req);
         try {
-            $diskon = array(
-                '' => $req->post(''),
-                '' => $req->post(''),
-                '' => $req->post(''),
-            );
-            Pesanan::where('pesanan_id', '=', $req->post('pesanan_id'))->update();
+            EkspedisiDanDiskon::create($req->all());
             return redirect('pesanan')->with('success', 'diskon berhasil');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
@@ -250,10 +248,10 @@ class PesananController extends Controller
 
         $pesananNow = new Pesanan();
         $pesananNow->procus_id = $req->data['procus_id'];
-        $pesananNow->user_id = Auth::user()->user_id;
+        $pesananNow->user_id = Auth::user()->id;
         $pesananNow->size_orders = $req->data['size_order'];
         $pesananNow->jml_order = $req->data['jumlah_order'];
-        $pesananNow->all_total = $req->data['harga_totals'];
+        $pesananNow->total_produk = $req->data['harga_totals'];
         $pesananNow->kurir_id = $req->data_jasa['kurir_id'];
         $pesananNow->payment_id = $req->data_jasa['payment_id'];
         $pesananNow->t_pesan = $req->data_jasa['t_pesan'];

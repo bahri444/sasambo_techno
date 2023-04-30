@@ -126,14 +126,18 @@
                                 </div>
                             </div>
                         </div>
+                        @if(Auth::user()->telepon != NULL)
                         <!-- tombol beli dan tambahkan ke keranjang -->
                         <div class="d-grid gap-2 col-6 mx-auto mt-1">
                             <button class="btn btn-outline-success" type="button" id="BeliLangsung" data-id="{{$val->procus_id}}"><span><i class="fas fa-dollar-sign"></i></span>Beli</button>
                             <button class="btn btn-outline-warning" type="button" id="ToCart" data-url="{{url('keranjang')}}"><span><i class="fas fa-shopping-cart"></i></span>Add cart</button>
                         </div>
+                        <!-- end modal tambah barang ke keranjang -->
+                        @elseif(Auth::user()->telepon == NULL)
+                        <p class="text text-danger">lengkapi data terlebih dahlu agar bisa melakukan transaksi</p>
+                        @endif
                     </form>
                 </div>
-                <!-- end modal tambah barang ke keranjang -->
                 @endif
                 @endforeach
             </div>

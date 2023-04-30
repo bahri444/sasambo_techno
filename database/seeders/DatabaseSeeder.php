@@ -5,8 +5,10 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 class DatabaseSeeder extends Seeder
 {
@@ -25,18 +27,17 @@ class DatabaseSeeder extends Seeder
         // ]);
 
         // insert record for database seeders
+        $date_time = Carbon::now()->toDateTimeString();
+        $token = Str::random(64);
         $data = array(
             [
                 'name' => 'super admin',
                 'email' => 'sasambotechno@gmail.com',
-                'password' => Hash::make('superadmin098'),
-                'role' => 'superadmin'
-            ],
-            [
-                'name' => 'administrator',
-                'email' => 'bahrysaipul266@gmail.com',
-                'password' => Hash::make('kasir098'),
-                'role' => 'kasir'
+                'email_verified_at' => $date_time,
+                'password' => Hash::make('123456'),
+                'role' => 'superadmin',
+                'token' => $token,
+                'is_email_verified' => 1,
             ]
         );
         User::insert($data);

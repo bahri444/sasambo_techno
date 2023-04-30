@@ -16,7 +16,7 @@
                             <h4 class="color__green">Login</h4>
                         </div>
                         <div class="container">
-                            <form action="loginAuth" method="post">
+                            <form action="{{route('login-post')}}" method="post">
                                 @csrf
                                 <div class="row">
                                     <div class="form-group mt-3">

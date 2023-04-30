@@ -11,7 +11,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-md-12 mb-3">
-                            <input type="hidden" class="form-control" name="user_id" value="{{Auth::user()->user_id}}">
+                            <input type="hidden" class="form-control" name="id" value="{{Auth::user()->id}}">
                             <h6>Telepon</h6>
                             <input class="form-control" type="text" name="telepon" placeholder="masukkan nomor telepon" aria-label="default input example">
                         </div>

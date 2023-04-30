@@ -35,8 +35,9 @@
                             <tr>
                                 <th class="text-center">No</th>
                                 <th class="text-center">Username</th>
-                                <th class="text-center">Nama lengkap</th>
+                                <th class="text-center">Alamat</th>
                                 <th class="text-center">Email</th>
+                                <th class="text-center">Waktu Verifikasi</th>
                                 <th class="text-center">Hak akses</th>
                                 <th class="text-center">Aksi</th>
                             </tr>
@@ -47,8 +48,9 @@
                             <tr class="text-center">
                                 <td><?= $i++ ?></td>
                                 <td>{{$val->name}}</td>
-                                <td>{{$val->nama_lengkap}}</td>
+                                <td>{{$val->desa}}</td>
                                 <td>{{$val->email}}</td>
+                                <td>{{$val->email_verified_at}}</td>
                                 <td>{{$val->role}}</td>
                                 <td>
                                     <div class="d-flex justify-content-center">

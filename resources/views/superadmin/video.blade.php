@@ -46,17 +46,17 @@
                                 <td>{{$val->video_link}}</td>
                                 <td>
                                     <div class="d-flex justify-content-center">
-                                        <div class="col-md-6 col-lg-2 col-sm-6">
+                                        <div class="col-md-6 col-lg-4 col-sm-6">
                                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpdate{{$val->video_id}}">
                                                 <i class="fas fa-edit"></i>
                                             </button>
                                         </div>
-                                        <div class="col-md-6 col-lg-2 col-sm-6">
+                                        <div class="col-md-6 col-lg-4 col-sm-6">
                                             <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalInfo{{$val->video_id}}">
                                                 <i class="fas fa-info"></i>
                                             </button>
                                         </div>
-                                        <div class="col-md-6 col-lg-2 col-sm-6">
+                                        <div class="col-md-6 col-lg-4 col-sm-6">
                                             <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelete{{$val->video_id}}">
                                                 <i class="fas fa-trash"></i>
                                             </button>

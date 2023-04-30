@@ -132,7 +132,7 @@
                         <li class="sidebar-item">
                             <a href="user" class='sidebar-link'>
                                 <i class="fas fa-users"></i>
-                                <span>Akun</span>
+                                <span>Kelola akun</span>
                             </a>
                         </li>
                         <li class="sidebar-item">
@@ -180,7 +180,7 @@
                         <li class="sidebar-item">
                             <a href="kurir" class='sidebar-link'>
                                 <i class="fas fa-truck"></i>
-                                <span>Kurir</span>
+                                <span>Jasa kirim</span>
                             </a>
                         </li>
                         <li class="sidebar-item">

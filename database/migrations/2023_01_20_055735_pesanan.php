@@ -24,7 +24,7 @@ return new class extends Migration
             $table->integer('jml_order')->length(10)->unsigned();
             $table->double('jml_dp')->nullable();
             $table->double('jml_lunas')->nullable();
-            $table->double('all_total')->nullable();
+            $table->double('total_produk')->nullable();
             $table->string('b_dp', 30)->nullable();
             $table->string('b_lunas', 30)->nullable();
             $table->string('t_pesan', 150);
@@ -34,7 +34,7 @@ return new class extends Migration
             $table->enum('status_pesanan', ['pending', 'diterima', 'kirim', 'selesai'])->default('pending');
             $table->timestamps();
             $table->foreign('procus_id')->references('procus_id')->on('produk_custom')->cascadeOnUpdate()->cascadeOnDelete();
-            $table->foreign('user_id')->references('user_id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
+            $table->foreign('user_id')->references('id')->on('users')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('sablon_id')->references('sablon_id')->on('sablon')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('kurir_id')->references('kurir_id')->on('kurir')->cascadeOnUpdate()->cascadeOnDelete();
             $table->foreign('payment_id')->references('payment_id')->on('payment')->cascadeOnUpdate()->cascadeOnDelete();

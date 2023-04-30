@@ -93,9 +93,7 @@
                                             </button>
                                         </div>
                                         <div class="col-md-6 col-lg-4 col-sm-6">
-                                            <button type="button" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalDiskon{{$val->pesanan_id}}">
-                                                <i class="fas fa-percent"></i>
-                                            </button>
+                                            <a href="/pesanan/ekspedisidandiskon/{{$val->pesanan_id}}" class="btn btn-warning"><i class="fas fa-percent"></i></a>
                                         </div>
                                     </div>
                                 </td>
@@ -259,6 +257,7 @@
                         </div>
                     </div>
                 </div>
+                <!-- logic bukti pembayaran -->
                 @elseif($row->b_dp == TRUE && $row->b_lunas == TRUE)
                 <div class="row row-cols-1 row-cols-md-2 g-4">
                     <div class="col">
@@ -290,12 +289,25 @@
                     </div>
                 </div>
                 @endif
+                <!-- end-logic bukti pembayaran -->
                 <div class="row">
                     <div class="col-md-4 col-lg-4 col-sm-6">
                         <h6>Nama pembeli</h6>
                     </div>
                     <div class="col-md-3 col-lg-8 col-sm-6">
                         <p>: {{$row->name}}</p>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-6">
+                        <h6>Telepon</h6>
+                    </div>
+                    <div class="col-md-3 col-lg-8 col-sm-6">
+                        <p>: {{$row->telepon}}</p>
+                    </div>
+                    <div class="col-md-4 col-lg-4 col-sm-6">
+                        <h6>Alamat pengiriman</h6>
+                    </div>
+                    <div class="col-md-3 col-lg-8 col-sm-6">
+                        <p>: {{$row->desa}}, {{$row->kecamatan}}, {{$row->kabupaten}}, {{$row->provinsi}}</p>
                     </div>
                     <div class="col-md-4 col-lg-4 col-sm-6">
                         <h6>Jasa kirim</h6>
@@ -312,6 +324,7 @@
                     <div class="col-md-4 col-lg-4 col-sm-6">
                         <h6>Harga satuan</h6>
                     </div>
+                    <!-- logic harga total produk sablon atau pakaian custom -->
                     <div class="col-md-3 col-lg-8 col-sm-6">
                         @if($row->sablon_id == true)
                         <p>: Rp. {{$row->harga}}</p>
@@ -329,6 +342,7 @@
                         <p>: {{$row->jml_order}}, {{"titik"}}</p>
                         @endif
                     </div>
+                    <!-- end-logic harga total produk sablon atau pakaian custom -->
                     <div class="col-md-4 col-lg-4 col-sm-6">
                         <h6>Tanggal order</h6>
                     </div>
@@ -336,17 +350,87 @@
                         <p>: {{$row->tgl_order}}</p>
                     </div>
                     <div class="col-md-4 col-lg-4 col-sm-6">
-                        <h6>Harga total</h6>
+                        <h6>Total produk</h6>
                     </div>
-                    @if($row->procus_id == NULL)
-                    <div class="col-md-3 col-lg-8 col-sm-6">
-                        <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga) ?></p>
-                    </div>
-                    @elseif($row->procus_id != NULL)
-                    <div class="col-md-3 col-lg-8 col-sm-6">
-                        <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga_satuan) ?></p>
-                    </div>
-                    @endif
+                    <!-- logic diskon -->
+                    <?php if ($row->getEkspedisiDandiskon != NULL) : ?>
+                        @if($row->procus_id == NULL)
+                        <div class="col-md-3 col-lg-8 col-sm-6">
+                            <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga) ?></p>
+                        </div>
+                        @elseif($row->procus_id != NULL)
+                        <div class="col-md-3 col-lg-8 col-sm-6">
+                            <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga_satuan) ?></p>
+                        </div>
+                        @endif
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Berat paket</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: {{$row->getEkspedisiDandiskon->berat_paket}} - {{$row->getEkspedisiDandiskon->satuan_berat}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Tarif pengiriman</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: Rp. {{$row->getEkspedisiDandiskon->tarif}} / {{$row->getEkspedisiDandiskon->satuan_berat}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Total Biaya Ekspedisi</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: Rp. {{$row->getEkspedisiDandiskon->total_ekspedisi}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Persentase diskon</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: {{$row->getEkspedisiDandiskon->persentase_diskon}} %</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Perolehan diskon</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: Rp. {{$row->getEkspedisiDandiskon->perolehan_diskon}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Harga setelah diskon</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: Rp. {{$row->getEkspedisiDandiskon->total_diskon}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Total tagihan pesanan</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <h6 class="text text-danger">: Rp. {{$row->getEkspedisiDandiskon->total_semua_pesanan}}</h6>
+                            </div>
+                        </div>
+                    <?php elseif ($row->getEkspedisiDandiskon == NULL) : ?>
+                        @if($row->procus_id == NULL)
+                        <div class="col-md-3 col-lg-8 col-sm-6">
+                            <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga) ?></p>
+                        </div>
+                        @elseif($row->procus_id != NULL)
+                        <div class="col-md-3 col-lg-8 col-sm-6">
+                            <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga_satuan) ?></p>
+                        </div>
+                        @endif
+                    <?php endif; ?>
+                    <!-- end-logic diskon -->
                     @if($row->b_dp != NULL && $row->b_lunas == NULL)
                     <div class="col-md-4 col-lg-4 col-sm-6">
                         <h6>Jumlah DP</h6>
@@ -370,85 +454,6 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- modal input diskon -->
-<div class="modal fade" id="modalDiskon{{$row->pesanan_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel">Diskon</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <form action="/pesanan/diskons" method="post">
-                @csrf
-                <div class="modal-body">
-                    <div class="row">
-                        <div class="col-4">
-                            <h6>Jumlah oreder</h6>
-                        </div>
-                        <div class="col-5">
-                            <p>: <?= $row->jml_order . ' ' . $row->satuan ?></p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <h6>Harga satuan</h6>
-                        </div>
-                        <div class="col-5">
-                            <p>: <?= $row->harga_satuan, ' / ', $row->satuan ?></p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <h6>Jasa kirim</h6>
-                        </div>
-                        <div class="col-5">
-                            <h6 class="text text-danger">: {{$row->nama_jakir}}</h6>
-                        </div>
-                    </div>
-                    @if($row->kurir_id >= 2)
-                    <div class="row">
-                        <div class="col-4">
-                            <h6>Ongkos kirim</h6>
-                        </div>
-                        <div class="col-5">
-                            <p>: Rp.--</p>
-                        </div>
-                    </div>
-                    @endif
-                    <div class="row">
-                        <div class="col-4">
-                            <h6>Total produk</h6>
-                        </div>
-                        <div class="col-5">
-                            <p>: <?= $row->jml_order * $row->harga_satuan ?></p>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-12">
-                            <div class="form-group">
-                                <h6 class="mt-3">Diskon produk</h6>
-                                <input type="text" name="" class="form-control" placeholder="masukkan jumlah diskon">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-4">
-                            <h6>Total pesanan</h6>
-                        </div>
-                        <div class="col-5">
-                            <p>: <?= $row->jml_order * $row->harga_satuan ?></p>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Save</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

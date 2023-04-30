@@ -1,33 +1,29 @@
 <?php
 
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ContactUsController;
 use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\HomeController;
 use App\Http\Controllers\InstansiController;
 use App\Http\Controllers\KategoriProdukController;
 use App\Http\Controllers\KtgrProCusController;
 use App\Http\Controllers\KtgrProSoftController;
-use App\Http\Controllers\ProCusController;
-use App\Http\Controllers\RoleMemberController;
-use App\Http\Controllers\UserController;
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\KurrirController;
+use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PesananController;
+use App\Http\Controllers\ProCusController;
 use App\Http\Controllers\ProSoftController;
 use App\Http\Controllers\ResetPasswordController;
+use App\Http\Controllers\RoleMemberController;
 use App\Http\Controllers\SablonController;
 use App\Http\Controllers\ShopCartController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TutorialController;
 use App\Http\Controllers\VideoController;
 use App\Http\Controllers\WarnaController;
-use App\Http\Middleware\Authenticate;
-use Illuminate\Auth\Events\Verified;
-use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Support\Facades\Auth;
-
+use Illuminate\Support\Facades\Route;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -39,45 +35,40 @@ use Illuminate\Support\Facades\Auth;
 |
 */
 
-Auth::routes([
-    'verify' => true
-]);
+// Auth::routes([
+//     'is_email_verify' => true
+// ]);
+// route landing page
+Route::get('/', [LandingPageController::class, 'Index'])->name('login');
+Route::get('/produk', [LandingPageController::class, 'SendToProduk'])->name('produk');
+Route::get('/tutorials', [LandingPageController::class, 'SendToTutorial'])->name('tutorial');
+Route::get('/videos', [LandingPageController::class, 'SendToVideo'])->name('video');
+Route::get('/contact', [LandingPageController::class, 'SendToContact'])->name('contact');
+Route::get('/detailcustom/{id}', [RoleMemberController::class, 'DetailCustom']); //route detail produk custom sebelum login
 
-// route halaman landing page
-Route::get('/', [HomeController::class, 'SendToIndex'])->name('landingpage');
-Route::get('/produk', [HomeController::class, 'SendToProduk'])->name('produk');
-Route::get('/tutorials', [HomeController::class, 'SendToTutorial'])->name('tutorial');
-Route::get('/videos', [HomeController::class, 'SendToVideo'])->name('video');
-Route::get('/contact', [HomeController::class, 'SendToContact'])->name('contact');
-// Route::get('/verify', [VerificationController::class, 'Verify'])->name('verify');
+// route login and register
+Route::get('/login', [AuthController::class, 'GetViewLogin'])->name('login');
+Route::get('/logout', [AuthController::class, 'Logout'])->name('logout');
+Route::post('/login-post', [AuthController::class, 'AuthLogin'])->name('login-post');
+Route::get('/register', [AuthController::class, 'GetViewRegister'])->name('register');
+Route::post('/register-post', [AuthController::class, 'RegisterPost'])->name('register-post');
+Route::get('/verify/{token}', [AuthController::class, 'VerifyAccount'])->name('verify'); //route verifikasi email
 
-Route::get('/detailcustom/{id}', [RoleMemberController::class, 'DetailCustom']); //route detail procus
+// route for reset password
+Route::get('/requestReset', [ResetPasswordController::class, 'ViewResetPasswd'])->name('RequestReset');
+Route::post('/sendResetPasswd', [ResetPasswordController::class, 'SendResetPasswd'])->name('SendResetPasswd');
+Route::get('/resetpasswdform/{token}', [ResetPasswordController::class, 'ResetPasswdForm'])->name('resetpasswdform.get');
+Route::post('/resetpasswdform', [ResetPasswordController::class, 'SendResetForm'])->name('resetpasswdform');
 
-// route authentication
-Route::get('/login', [UserController::class, 'GetLogin'])->name('login');
-Route::name('auth')->group(function () {
-    Route::get('/register', [UserController::class, 'GetRegister'])->name('register');
-    Route::get('/register', [UserController::class, 'GetRegister'])->name('register');
-    Route::post('/addRegister', [UserController::class, 'PostRegister'])->name('addRegister');
-    Route::post('/loginAuth', [UserController::class, 'AuthLogin'])->name('LoginAuth');
-    // Route::post('/loginAuth', [Authenticate::class, 'AuthLogin'])->name('LoginAuth');
-    Route::get('/logout', [UserController::class, 'Logout'])->name('logout');
-
-    // route for reset password
-    Route::get('/requestReset', [ResetPasswordController::class, 'ViewResetPasswd'])->name('RequestReset');
-    Route::post('/sendResetPasswd', [ResetPasswordController::class, 'SendResetPasswd'])->name('SendResetPasswd');
-    Route::get('/resetpasswdform/{token}', [ResetPasswordController::class, 'ResetPasswdForm'])->name('resetpasswdform.get');
-    Route::post('/resetpasswdform', [ResetPasswordController::class, 'SendResetForm'])->name('resetpasswdform');
-});
 
 // route for role super admin
 // route for table user
 Route::prefix('user')->group(function () {
-    Route::get('/', [UserController::class, 'GetAllUser'])->name('akun');
-    Route::get('/data', [UserController::class, 'GetAll'])->name('data');
-    Route::post('/adduser', [UserController::class, 'Adduser'])->name('adduser');
-    Route::post('/change', [UserController::class, 'ChangeRole'])->name('change');
-    Route::get('/delete/{id}', [UserController::class, 'Delete'])->name('delete');
+    Route::get('/', [AuthController::class, 'GetAllUser'])->name('akun');
+    Route::get('/data', [AuthController::class, 'GetAll'])->name('data');
+    Route::post('/adduser', [AuthController::class, 'Adduser'])->name('adduser');
+    Route::post('/change', [AuthController::class, 'ChangeRole'])->name('change');
+    Route::get('/delete/{id}', [AuthController::class, 'Delete'])->name('delete');
 });
 
 // route dashboard
@@ -167,15 +158,16 @@ Route::prefix('warna')->group(function () {
 
 // route table pesanan pakaian custom dan sablon
 Route::prefix('pesanan')->group(function () {
-    Route::get('/', [PesananController::class, 'GetPesanan'])->name('pesanan');
+    Route::get('/', [PesananController::class, 'GetPesanan'])->name('pesanan')->middleware('verified'); // load view pesanan for all role user
     Route::post('validasipesanan', [PesananController::class, 'ValidasiPesanan'])->name('validasipesanan'); //for superadmin
     Route::post('validasiproduksi', [PesananController::class, 'ValidasiProduction'])->name('validasiproduksi'); //for role production
     Route::post('/addpesanan', [PesananController::class, 'AddPesanan'])->name('addPesanan'); //checkout sablon dari halaman home
     Route::post('/checkoutnow', [PesananController::class, 'CheckoutNow'])->name('checkoutNow'); //checkout pesanan dari halaman detail produk custom
-    Route::post('/bayar', [PesananController::class, 'BayarProdukCustom'])->name('bayar');
-    Route::post('/bayarlunas', [PesananController::class, 'BayarLunas'])->name('bayarlunas');
-    Route::post('/diskons', [PesananController::class, 'Discount'])->name('diskons');
-    Route::get('/delpesanan/{id}', [PesananController::class, 'DeletePesanan'])->name('delpesanan');
+    Route::post('/bayar', [PesananController::class, 'BayarProdukCustom'])->name('bayar'); //kirim data bayar DP oleh member
+    Route::post('/bayarlunas', [PesananController::class, 'BayarLunas'])->name('bayarlunas'); //kirim data bayar lunas oleh member
+    Route::get('/ekspedisidandiskon/{pesanan_id}', [PesananController::class, 'GetViewEkspedisiDanPesanan'])->name('ekspedisidandiskon'); //load view form ekspedisi dan diskon
+    Route::post('/ekspedisidandiskon', [PesananController::class, 'EkspedisiDanDiskon'])->name('ekspedisidandiskon'); //save data form ekspedisi dan diskon
+    Route::get('/delpesanan/{id}', [PesananController::class, 'DeletePesanan'])->name('delpesanan'); //delete pesanan oleh superadmin
     Route::post('/pesananselesai', [PesananController::class, 'PesananSelesai'])->name('pesananselesai'); //route konfirmasi pesanan selesai oleh member
 });
 
@@ -226,27 +218,24 @@ Route::name('admin')->group(function () {
 
 // route for role access member or client
 Route::name('members')->group(function () {
-    Route::get('/home', [RoleMemberController::class, 'GetHome'])->name('home');
-    Route::get('/details/{produk_custom_id}', [RoleMemberController::class, 'DetailProdukCustomSebelumCheckout'])->name('details')->middleware('verified'); // detail sebelum menambahkan ke keranjang barang
+    Route::get('/home', [RoleMemberController::class, 'Home'])->name('home')->middleware('is_verify_email'); //load halaman home after login
+    Route::get('/details/{produk_custom_id}', [RoleMemberController::class, 'DetailProdukCustomSebelumCheckout'])->name('details')->middleware('is_verify_email'); // detail custom setelah login dan sebelum menambahkan ke keranjang barang
 
     //route lengkapi profile oleh pelanggan
-    Route::get('/form', [UserController::class, 'GetForm'])->name('form')->middleware('verified'); //get form lengkapi akun
-    Route::post('/updtakun', [UserController::class, 'UpdtUser'])->name('updtakun')->middleware('verified'); //kirim nilai yang di input dari form
+    Route::get('/form', [AuthController::class, 'GetForm'])->name('form')->middleware('is_verify_email'); //get form lengkapi akun
+    Route::post('/updtakun', [AuthController::class, 'UpdtUser'])->name('updtakun')->middleware('is_verify_email'); //kirim nilai yang di input dari form
 
-    Route::get('/profile', [UserController::class, 'GetAllUser'])->name('Profile')->middleware('verified');
-    Route::get('/pesanananda', [PesananController::class, 'GetPesanan'])->name('pesanananda')->middleware('verified');
-    Route::get('/invoice', [RoleMemberController::class, 'GetInvoice'])->name('invoice')->middleware('verified');
+    Route::get('/profile', [AuthController::class, 'GetAllUser'])->name('Profile')->middleware('is_verify_email'); //load profile member
+    Route::get('/pesanananda', [PesananController::class, 'GetPesanan'])->name('pesanananda')->middleware('is_verify_email'); //load all pesanan role member
+    Route::get('/invoice', [RoleMemberController::class, 'GetInvoice'])->name('invoice')->middleware('is_verify_email');  //cetak invoice in member
 
-    Route::get('/cart', [ShopCartController::class, 'GetDataCart'])->name('cart')->middleware('verified');
-    Route::post('/keranjang', [ShopCartController::class, 'AddToCart'])->middleware('verified'); //route untuk menambahkan pakaian custom ke keranjang
-    Route::post('/sabloncart', [ShopCartController::class, 'AddSablonToKeranjang'])->middleware('verified'); //route untuk menambahkan sablon ke keranjang
-    Route::post('/addsablontocart', [ShopCartController::class, 'AddSablonToCart'])->name('addsablontocart');
-});
-Route::prefix('pilihbaju')->group(function () {
-    Route::get('/{id}', [RoleMemberController::class, 'DataProcus'])->middleware('verified');
+    Route::get('/cart', [ShopCartController::class, 'GetDataCart'])->name('cart')->middleware('is_verify_email'); //load data keranjang belanja
+    Route::post('/keranjang', [ShopCartController::class, 'AddToCart'])->name('keranjang')->middleware('is_verify_email'); //route untuk menambahkan pakaian custom ke keranjang
+    Route::post('/sabloncart', [ShopCartController::class, 'AddSablonToKeranjang'])->middleware('is_verify_email'); //route untuk menambahkan sablon ke keranjang
+    Route::post('/addsablontocart', [ShopCartController::class, 'AddSablonToCart'])->name('addsablontocart')->middleware('is_verify_email'); //route add sablon to shop cart
 });
 
 Route::prefix('cart')->group(function () {
-    Route::get('/delete/{id}', [ShopCartController::class, 'DelBarangOnKeranjang'])->name('delete');
-    Route::post('/checkout', [ShopCartController::class, 'TrxPakaiancustom'])->name('checkout');
+    Route::get('/delete/{id}', [ShopCartController::class, 'DelBarangOnKeranjang'])->name('delete'); //delete isi keranjang belanja oleh member
+    Route::post('/checkout', [ShopCartController::class, 'TrxPakaiancustom'])->name('checkout'); //checkout pakaian custom from cart shop in role member
 });

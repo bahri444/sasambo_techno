@@ -11,17 +11,16 @@ use App\Models\ProdukCustom;
 use App\Models\Sablon;
 use App\Models\Shop_cart;
 use App\Models\User;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class RoleMemberController extends Controller
 {
-    public function GetHome()
+    public function Home()
     {
-        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
+        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
         $procategori = KtgrProcus::joinToKategori()->get();
         $produkCustom = ProdukCustom::joinKategoriProdukCostum()->get();
-        // $testing = ProdukCustom::joinKategoriProdukCostum()->orderBy('ktgr_procus_id', 'desc')->paginate(1);
-        // dd($testing);
         $instansi = Instansi::all();
         $sablon = Sablon::all();
         $payment = Payment::all();
@@ -34,7 +33,6 @@ class RoleMemberController extends Controller
             'sablon' => $sablon,
             'payment' => $payment,
             'kurir' => $kurir,
-            // 'testing' => $testing,
             'isiKeranjang' => $isiKeranjang,
         ]);
     }
@@ -42,7 +40,7 @@ class RoleMemberController extends Controller
     public function GetInvoice()
     {
         $data = Instansi::all();
-        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count();
+        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count();
         return view('members.yourInvoice', [
             'title' => 'histori invoice anda',
             'instansi' => $data,
@@ -51,7 +49,7 @@ class RoleMemberController extends Controller
     }
     public function GetProfile()
     {
-        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count();
+        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count();
         $data = Instansi::select('logo')->get();
         $users = User::all();
         return view('members.profile', [
@@ -83,7 +81,7 @@ class RoleMemberController extends Controller
     public function DetailProdukCustomSebelumCheckout($produk_custom_id)
     {
         $instansi = Instansi::select('logo')->get();
-        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->user_id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
+        $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login 'isiKeranjang' => $isiKeranjang,
         $data_produk_custom = ProdukCustom::joinWarna()->joinKategoriProdukCostum()->get();
         $jasa_kirim = Kurir::all();
         $metode_pembayaran = Payment::all();

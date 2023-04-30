@@ -19,7 +19,7 @@
 
 <!-- lihat data produk yang ada di dalam keranjang anda -->
 @foreach($shopcartproduk as $row)
-@if(Auth::user()->user_id == $row->user_id)
+@if(Auth::user()->id == $row->user_id)
 
 <!-- jika id produk custom tidak kosong -->
 @if($row->procus_id != NULL)
@@ -155,7 +155,7 @@
                         <input type="hidden" name="procus_id" value="{{$val->procus_id}}" class="form-control" id="exampleFormControlInput1">
                         <input type="hidden" name="sablon_id" value="{{$val->sablon_id}}" class="form-control" id="exampleFormControlInput1">
                         <input type="hidden" name="color" value="{{$val->nama_warna}}" class="form-control" id="exampleFormControlInput1">
-                        <input type="hidden" name="user_id" value="{{Auth::user()->user_id}}" class="form-control" id="exampleFormControlInput1">
+                        <input type="hidden" name="user_id" value="{{Auth::user()->id}}" class="form-control" id="exampleFormControlInput1">
                         <input type="number" name="jml_order" value="{{$val->jumlah_order}}" class="form-control" id="exampleFormControlInput1">
                     </div>
                     <div class="mb-3">
@@ -177,8 +177,12 @@
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="" class="form-label">Size_order</label>
+                        <label for="" class="form-label">Size order</label>
+                        @if($val->sablon_id != NULL)
+                        <input type="text" name="size_orders" value="{{$val->ukuran_sablon}}" class="form-control" readonly>
+                        @elseif($val->sablon_id == NULL)
                         <input type="text" name="size_orders" value="{{$val->size_order}}" class="form-control" readonly>
+                        @endif
                     </div>
                     <div class="mb-3">
                         <label for="exampleFormControlTextarea1" class="form-label">Tinggalkan pesan</label>
