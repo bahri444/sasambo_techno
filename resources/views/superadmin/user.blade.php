@@ -55,17 +55,17 @@
                                 <td>
                                     <div class="d-flex justify-content-center">
                                         <div class="col-md-6 col-lg-3 col-sm-6">
-                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpdate{{$val->user_id}}">
+                                            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalUpdate{{$val->id}}">
                                                 <i class="fas fa-user-check"></i>
                                             </button>
                                         </div>
                                         <div class="col-md-6 col-lg-3 col-sm-6">
-                                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalInfo{{$val->user_id}}">
+                                            <button type="button" class="btn btn-info" data-bs-toggle="modal" data-bs-target="#modalInfo{{$val->id}}">
                                                 <i class="fas fa-info"></i>
                                             </button>
                                         </div>
                                         <div class="col-md-6 col-lg-3 col-sm-6">
-                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelete{{$val->user_id}}">
+                                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalDelete{{$val->id}}">
                                                 <i class="fas fa-trash"></i>
                                             </button>
                                         </div>
@@ -154,7 +154,7 @@
 
 <!-- Modal change role-->
 @foreach($users as $valId)
-<div class="modal fade" id="modalUpdate{{$valId->user_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalUpdate{{$valId->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -166,7 +166,7 @@
                     @csrf
                     <div class="row">
                         <div class="col-12">
-                            <input type="hidden" class="form-control" name="user_id" value="{{$valId->user_id}}">
+                            <input type="hidden" class="form-control" name="id" value="{{$valId->id}}">
                             <h6>Hak akses</h6>
                             <fieldset class="form-group">
                                 <select name="role" id="basicSelect" class="form-select">
@@ -190,7 +190,7 @@
 </div>
 
 <!-- modal info akun user -->
-<div class="modal fade" id="modalInfo{{$valId->user_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalInfo{{$valId->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -204,7 +204,7 @@
                             <h6>Nama lengkap</h6>
                         </div>
                         <div class="col-sm-6 col-md-6 col-lg-8">
-                            <p>: {{$valId->nama_lengkap}}</p>
+                            <p>: {{$valId->name}}</p>
                         </div>
                     </div>
                     <div class="row">
@@ -259,7 +259,7 @@
 
 <!-- Modal hapus-->
 @foreach($users as $valDel)
-<div class="modal fade" id="modalDelete{{$valDel->user_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+<div class="modal fade" id="modalDelete{{$valDel->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
@@ -267,12 +267,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <input type="hidden" class="form-control" value="{{$valDel->user_id}}" name="produk_id">
+                <input type="hidden" class="form-control" value="{{$valDel->id}}" name="produk_id">
                 <p>Yakin ingin menghapus akun {{$valDel->username}} dari hak akses sebagai {{$valDel->role}}</p>
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-warning" data-bs-dismiss="modal">Close</button>
-                <a href="/user/delete/{{$valDel->user_id}}" class="btn btn-danger">Delete</a>
+                <a href="/user/delete/{{$valDel->id}}" class="btn btn-danger">Delete</a>
             </div>
         </div>
     </div>
@@ -293,13 +293,13 @@
     //         success: function(datas) {
     //             $.each(datas.users, function(key, row) {
     //                 $('#table1 > tbody').append('<tr>\
-    //                             <td>' + row.user_id + '</td>\
+    //                             <td>' + row.id + '</td>\
     //                             <td>' + row.name + '</td>\
     //                             <td>' + row.email + '</td>\
     //                             <td>' + row.role + '</td>\
     //                             <td>\
-    //                         <button type="button" class="btn btn-success" value="' + row.user_id + '">edit</button>\
-    //                         <button type="button" class="btn btn-danger" value="' + row.user_id + '">hapus</button></td>\
+    //                         <button type="button" class="btn btn-success" value="' + row.id + '">edit</button>\
+    //                         <button type="button" class="btn btn-danger" value="' + row.id + '">hapus</button></td>\
     //                         </tr>');
     //             })
     //         }
