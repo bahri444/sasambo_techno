@@ -419,36 +419,113 @@
                                 <h6 class="text text-danger">: Rp. {{$row->getEkspedisiDandiskon->total_semua_pesanan}}</h6>
                             </div>
                         </div>
-                    <?php elseif ($row->getEkspedisiDandiskon == NULL) : ?>
-                        @if($row->procus_id == NULL)
-                        <div class="col-md-3 col-lg-8 col-sm-6">
-                            <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga) ?></p>
+                        @if($row->b_dp != NULL && $row->b_lunas == NULL)
+                        <!-- hitung jumlah dp produk yang didiskon-->
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Jumlah DP</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p class="text text-success">: Rp. {{$row->jml_dp}}</p>
+                            </div>
                         </div>
-                        @elseif($row->procus_id != NULL)
-                        <div class="col-md-3 col-lg-8 col-sm-6">
-                            <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga_satuan) ?></p>
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Sisa bayar</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p class="text text-danger">: Rp. {{($row->getEkspedisiDandiskon->total_semua_pesanan) - ($row->jml_dp)}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="d-grid gap-1 col-6 mx-auto">
+                                <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                            </div>
+                        </div>
+                        @elseif(($row->b_dp != NULL && $row->b_lunas != NULL) || ($row->b_lunas != NULL))
+                        <!-- hitung jumlah lunas produk yang didiskon-->
+                        <div class="row">
+                            <div class="col-md-4 col-lg-4 col-sm-6">
+                                <h6>Lunas</h6>
+                            </div>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p class="text text-success">: Rp. {{($row->jml_dp + $row->jml_lunas)}}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="d-grid gap-1 col-6 mx-auto">
+                                <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                            </div>
                         </div>
                         @endif
+                    <?php elseif ($row->getEkspedisiDandiskon == NULL) : ?>
+                        <?php if ($row->procus_id == NULL) : ?>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga) ?></p>
+                            </div>
+                            <?php if ($row->b_dp != NULL && $row->b_lunas == NULL) : ?>
+                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                    <h6>Jumlah DP</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-8 col-sm-6">
+                                    <p class="text text-success">: Rp. <?= $row->jml_dp ?></p>
+                                </div>
+                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                    <h6 class="text text-danger">Sisa bayar</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-8 col-sm-6">
+                                    <p class="text text-danger">: Rp. <?= $sisa = ($row->jml_order * $row->harga) - $row->jml_dp ?></p>
+                                </div>
+                                <div class="row">
+                                    <div class="d-grid gap-1 col-6 mx-auto">
+                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                    </div>
+                                </div>
+                            <?php elseif (($row->b_dp != NULL && $row->b_lunas != NULL) || $row->b_lunas != NULL) : ?>
+                                <h6 class="text text-success text-center">Lunas : Rp. <?= $lunas = ($row->jml_dp + $row->jml_lunas) ?></h6>
+                                <div class="row">
+                                    <div class="d-grid gap-1 col-6 mx-auto">
+                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                    </div>
+                                </div>
+                            <?php elseif ($row->b_dp == NULL && $row->b_lunas == NULL) : ?>
+                                <h6 class="text text-danger text-center">Belum Membayar</h6>
+                            <?php endif; ?>
+                        <?php elseif ($row->procus_id != NULL) : ?>
+                            <div class="col-md-3 col-lg-8 col-sm-6">
+                                <p>: Rp. <?= $total_harga = ($row->jml_order * $row->harga_satuan) ?></p>
+                            </div>
+                            <?php if ($row->b_dp != NULL && $row->b_lunas == NULL) : ?>
+                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                    <h6>Jumlah DP</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-8 col-sm-6">
+                                    <p class="text text-success">: Rp. <?= $row->jml_dp ?></p>
+                                </div>
+                                <div class="col-md-4 col-lg-4 col-sm-6">
+                                    <h6 class="text text-danger">Sisa bayar</h6>
+                                </div>
+                                <div class="col-md-3 col-lg-8 col-sm-6">
+                                    <p class="text text-danger">: Rp. <?= $sisa = ($row->jml_order * $row->harga_satuan) - $row->jml_dp ?></p>
+                                </div>
+                                <div class="row">
+                                    <div class="d-grid gap-1 col-6 mx-auto">
+                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                    </div>
+                                </div>
+                            <?php elseif (($row->b_dp != NULL && $row->b_lunas != NULL) || $row->b_lunas != NULL) : ?>
+                                <h6 class="text text-success text-center">Lunas : Rp. <?= $lunas = ($row->jml_dp + $row->jml_lunas) ?></h6>
+                                <div class="row">
+                                    <div class="d-grid gap-1 col-6 mx-auto">
+                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                    </div>
+                                </div>
+                            <?php elseif ($row->b_dp == NULL && $row->b_lunas == NULL) : ?>
+                                <h6 class="text text-danger text-center">Belum Membayar</h6>
+                            <?php endif; ?>
+                        <?php endif; ?>
                     <?php endif; ?>
                     <!-- end-logic diskon -->
-                    @if($row->b_dp != NULL && $row->b_lunas == NULL)
-                    <div class="col-md-4 col-lg-4 col-sm-6">
-                        <h6>Jumlah DP</h6>
-                    </div>
-                    <div class="col-md-3 col-lg-8 col-sm-6">
-                        <p class="text text-success">: Rp. <?= $row->jml_dp ?></p>
-                    </div>
-                    <div class="col-md-4 col-lg-4 col-sm-6">
-                        <h6 class="text text-danger">Sisa bayar</h6>
-                    </div>
-                    <div class="col-md-3 col-lg-8 col-sm-6">
-                        <p class="text text-danger">: Rp. <?= $sisa = ($row->jml_order * $row->harga_satuan) - $row->jml_dp ?></p>
-                    </div>
-                    @elseif(($row->b_dp != NULL && $row->b_lunas != NULL)||$row->b_lunas != NULL)
-                    <h6 class="text text-success text-center">Lunas : Rp. <?= $lunas = ($row->jml_dp + $row->jml_lunas) ?></h6>
-                    @elseif($row->b_dp == NULL && $row->b_lunas == NULL)
-                    <h6 class="text text-danger text-center">Belum Membayar</h6>
-                    @endif
                 </div>
             </div>
             <div class="modal-footer">

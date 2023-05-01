@@ -26,7 +26,7 @@ class PesananController extends Controller
                 'pesanan' => $data,
             ]);
         } elseif (Auth::user()->role == 'pelanggan') {
-            $instansi = Instansi::select('logo', 'whatsapp')->get();
+            $instansi = Instansi::select('logo', 'whatsapp', 'billing')->get();
             $isiKeranjang = Shop_cart::where('user_id', '=', Auth::user()->id)->get()->count(); //hitung isi keranjang berdasarkan user yang login
             $dataPesanan = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
                 ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->with('getEkspedisiDanDiskon')->orderBy('pesanan_id', 'desc')->get();

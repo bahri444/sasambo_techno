@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -87,22 +88,26 @@ class AuthController extends Controller
             'email' => 'required',
             'password' => 'required',
         ]);
-        // dd($request);
         $data = $request->only('email', 'password');
         if (Auth::attempt($data)) {
-            if (Auth::user()->role == 'superadmin') {
-                return redirect()->intended('/dashboard')->withSuccess('anda berhasil login');
-            } elseif (Auth::user()->role == 'kasir') {
-                return redirect()->intended('/index')->withSuccess('anda berhasil login');
-            } elseif (Auth::user()->role == 'produksi') {
-                return redirect()->intended('/pesanan')->withSuccess('anda berhasil login');
-            } elseif (Auth::user()->role == 'pelanggan') {
-                return redirect()->intended('/home')->withSuccess('anda berhasil login');
+            if (Auth::user()->is_email_verified == 1) {
+                if (Auth::user()->role == 'superadmin') {
+                    return redirect()->intended('/dashboard')->withSuccess('anda berhasil login');
+                } elseif (Auth::user()->role == 'kasir') {
+                    return redirect()->intended('/index')->withSuccess('anda berhasil login');
+                } elseif (Auth::user()->role == 'produksi') {
+                    return redirect()->intended('/pesanan')->withSuccess('anda berhasil login');
+                } elseif (Auth::user()->role == 'pelanggan') {
+                    return redirect()->intended('/home')->withSuccess('anda berhasil login');
+                } else {
+                    print_r("anda tidak memiliki hak akses");
+                }
             } else {
-                print_r("anda tidak memiliki hak akses");
+                return redirect('/login')->withErrors(['errors' => 'email belum di verifikasi, cek email untuk link verifikasi']);
             }
+        } elseif (!Auth::attempt($data)) {
+            return redirect('/login')->withErrors(['errors' => 'email atau password salah']);
         }
-        return redirect('login')->withSuccess('invalid username or password');
     }
 
     public function GetViewRegister()
@@ -123,20 +128,27 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6',
         ]);
-        // dd($request);
-        $token = Str::random(64);
-        $data = new User([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'token' => $token,
-        ]);
-        $data->save();
-        Mail::send('email.emailVerification', ['token' => $token], function ($message) use ($request) {
-            $message->to($request->email);
-            $message->subject('silahkan verifikasi email anda');
-        });
-        return redirect('/login')->withSuccess('berhasil registrasi');
+        try {
+            DB::beginTransaction();
+            $token = Str::random(64);
+            $data = new User([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'token' => $token,
+            ]);
+            $data->save();
+            Mail::send('email.emailVerification', ['token' => $token], function ($message) use ($request) {
+                $message->to($request->email);
+                $message->subject('silahkan verifikasi email anda');
+            });
+            DB::commit();
+            return redirect('/login')->withSuccess('registrasi berhasil silahkan cek email untuk verifikasi akun');
+        } catch (\Throwable $th) {
+            Log::error($th->getMessage());
+            DB::rollBack();
+            return redirect('register')->with('errors', $th);
+        }
     }
 
     public function Home()
