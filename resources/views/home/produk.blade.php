@@ -49,14 +49,13 @@
 
     <!-- view data sablon -->
     <div class="row mt-1">
-        <h5 class="text-center mt-3 mb-2 color__green">
+        <h5 class="text-center mt-3 color__green">
             Jasa sablon
         </h5>
-        <div class="row row-cols-1 row-cols-md-6 g-4">
+        <div class="row row-cols-1 row-cols-md-6 g-2 mx-auto">
             @foreach($sablon as $val)
-            @if($val->harga !=0)
             <div class="col">
-                <div class="card h-100 card-body">
+                <div class="card h-100 shadow-sm card-body">
                     <div class="row">
                         <div class="col-5">
                             <p class="color__green">Ukuran</p>
@@ -70,13 +69,11 @@
                             <p class="color__green">Harga</p>
                         </div>
                         <div class="col-7">
-                            <p class="card-text">Rp. {{$val->harga}}
-                                <input type="hidden" value="{{$val->harga}}">
+                            <p class="card-text">Rp. {{$val->harga}}</p>
                         </div>
                     </div>
                 </div>
             </div>
-            @endif
             @endforeach
         </div>
     </div>
