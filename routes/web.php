@@ -11,6 +11,7 @@ use App\Http\Controllers\KurrirController;
 use App\Http\Controllers\LandingPageController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PesananController;
 use App\Http\Controllers\ProCusController;
 use App\Http\Controllers\ProSoftController;
@@ -38,6 +39,10 @@ use Illuminate\Support\Facades\Route;
 // Auth::routes([
 //     'is_email_verify' => true
 // ]);
+// route load download pdf
+// Route::get('/struct', [PdfController::class, 'Invoice'])->name('struct');
+Route::resource('/struct', PdfController::class);
+
 // route landing page
 Route::get('/', [LandingPageController::class, 'Index'])->name('login');
 Route::get('/produk', [LandingPageController::class, 'SendToProduk'])->name('produk');
@@ -169,6 +174,7 @@ Route::prefix('pesanan')->group(function () {
     Route::post('/ekspedisidandiskon', [PesananController::class, 'EkspedisiDanDiskon'])->name('ekspedisidandiskon'); //save data form ekspedisi dan diskon
     Route::get('/delpesanan/{id}', [PesananController::class, 'DeletePesanan'])->name('delpesanan'); //delete pesanan oleh superadmin
     Route::post('/pesananselesai', [PesananController::class, 'PesananSelesai'])->name('pesananselesai'); //route konfirmasi pesanan selesai oleh member
+    Route::get('/invoice/{id}', [PesananController::class, 'KasirCetakInvoice'])->name('invoice'); //route info pesanan
 });
 
 Route::prefix('contactus')->group(function () {
@@ -227,7 +233,7 @@ Route::name('members')->group(function () {
 
     Route::get('/profile', [AuthController::class, 'GetAllUser'])->name('Profile')->middleware('is_verify_email'); //load profile member
     Route::get('/pesanananda', [PesananController::class, 'GetPesanan'])->name('pesanananda')->middleware('is_verify_email'); //load all pesanan role member
-    Route::get('/invoice', [RoleMemberController::class, 'GetInvoice'])->name('invoice')->middleware('is_verify_email');  //cetak invoice in member
+    // Route::get('/invoice', [RoleMemberController::class, 'GetInvoice'])->name('invoice')->middleware('is_verify_email');  //cetak invoice in member
 
     Route::get('/cart', [ShopCartController::class, 'GetDataCart'])->name('cart')->middleware('is_verify_email'); //load data keranjang belanja
     Route::post('/keranjang', [ShopCartController::class, 'AddToCart'])->name('keranjang')->middleware('is_verify_email'); //route untuk menambahkan pakaian custom ke keranjang

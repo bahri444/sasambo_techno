@@ -6,6 +6,7 @@ use App\Models\EkspedisiDanDiskon;
 use App\Models\Instansi;
 use App\Models\Pesanan;
 use App\Models\Shop_cart;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -38,6 +39,27 @@ class PesananController extends Controller
             ]);
         } else {
             echo '403 forbidden';
+        }
+    }
+
+    // cetak invoice oleh role kasir dan customer
+    public function KasirCetakInvoice($id)
+    {
+        if (Auth::user()->role == 'kasir' || Auth::user()->role == 'pelanggan') {
+            $instansi = Instansi::select('logo')->get();
+            $title = 'cetakinvoice';
+            $pesanan = Pesanan::joinToProdukCustom()->joinToKategoriProdukCustom()->joinToWarna()
+                ->joinToUser()->joinToSablon()->joinToKurir()->joinToPayment()->with('getEkspedisiDanDiskon')->orderBy('pesanan_id', 'desc')->get();
+            if (request('output') == 'pdf') {
+                $pdf = Pdf::loadView('admin.invoice', ['pesanan' => $pesanan, 'instansi' => $instansi, 'title' => $title, 'id' => $id])->setOptions(['defaultFont' => 'sans-serif']);
+                return $pdf->download('invoice.pdf');
+            }
+            return view('admin.invoice', [
+                'title' => 'pesanan pakaian custom',
+                'instansi' => $instansi,
+                'pesanan' => $pesanan,
+                'id' => $id,
+            ]);
         }
     }
 
@@ -105,7 +127,7 @@ class PesananController extends Controller
                 'pay_status' => $req->post('pay_status'),
             );
             Pesanan::where('pesanan_id', '=', $req->post('pesanan_id'))->update($bayarLunas);
-            return redirect('invoice')->with('success', 'pembayaran berhasil');
+            return redirect('pesanananda')->with('success', 'pembayaran berhasil');
         } catch (\Exception $e) {
             Log::error($e->getMessage());
             return redirect('pesanananda')->with('errors', 'pembayaran gagal silahkan coba lagi');

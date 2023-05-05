@@ -47,8 +47,8 @@
                             <tr class="text-center">
                                 <td><?= $i++ ?></td>
                                 <td>{{$val->name}}</td>
-                                <td>@if($val->nama_produk != NULL){{$val->nama_produk}}@elseif($val->nama_produk == NULL){{"Sablon"}}@endif</td>
-                                <td>@if($val->size_orders != NULL){{$val->size_orders}}@elseif($val->size_orders == NULL){{$val->ukuran_sablon}}@endif</td>
+                                <td>{{$val->nama_produk ?? "Sablon"}}</td>
+                                <td>{{$val->size_orders ?? $val->ukuran_sablon}}</td>
                                 <td>{{$val->jml_order}}</td>
                                 <td class="text text-danger">{{$val->pay_status}}</td>
                                 <td class="text text-success">{{$val->stts_produksi}}</td>
@@ -73,8 +73,8 @@
                             <tr class="text-center">
                                 <td><?= $i++ ?></td>
                                 <td>{{$val->name}}</td>
-                                <td>@if($val->nama_produk != NULL){{$val->nama_produk}}@elseif($val->nama_produk == NULL){{"Sablon"}}@endif</td>
-                                <td>@if($val->size_orders != NULL){{$val->size_orders}}@elseif($val->size_orders == NULL){{$val->ukuran_sablon}}@endif</td>
+                                <td>{{$val->nama_produk ?? "Sablon"}}</td>
+                                <td>{{$val->size_orders ?? $val->ukuran_sablon}}</td>
                                 <td>{{$val->jml_order}}</td>
                                 <td class="text text-danger">{{$val->pay_status}}</td>
                                 <td class="text text-success">{{$val->stts_produksi}}</td>
@@ -87,6 +87,10 @@
                                                 <i class="fas fa-info"></i>
                                             </button>
                                         </div>
+                                        <!-- <div class="col-md-6 col-lg-4 col-sm-6">
+                                            <a href="/pesanan/invoice/{{$val->pesanan_id}}" class="btn btn-primary"><i class="fas fa-file-invoice-dollar"></i></a>
+                                            </button>
+                                        </div> -->
                                         <div class="col-md-6 col-lg-4 col-sm-6">
                                             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalValidasi{{$val->pesanan_id}}">
                                                 <i class="fas fa-check-square"></i>
@@ -104,8 +108,8 @@
                             <tr class="text-center">
                                 <td><?= $i++ ?></td>
                                 <td>{{$val->name}}</td>
-                                <td>@if($val->nama_produk != NULL){{$val->nama_produk}}@elseif($val->nama_produk == NULL){{"Sablon"}}@endif</td>
-                                <td>@if($val->size_orders != NULL){{$val->size_orders}}@elseif($val->size_orders == NULL){{$val->ukuran_sablon}}@endif</td>
+                                <td>{{$val->nama_produk ?? "Sablon"}}</td>
+                                <td>{{$val->size_orders ?? $val->ukuran_sablon}}</td>
                                 <td>{{$val->jml_order}}</td>
                                 <td class="text text-danger">{{"Hak kasir"}}</td>
                                 <td class="text text-success">{{$val->stts_produksi}}</td>
@@ -439,7 +443,7 @@
                         </div>
                         <div class="row">
                             <div class="d-grid gap-1 col-6 mx-auto">
-                                <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                <a href="/pesanan/invoice/{{$row->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
                             </div>
                         </div>
                         @elseif(($row->b_dp != NULL && $row->b_lunas != NULL) || ($row->b_lunas != NULL))
@@ -454,7 +458,7 @@
                         </div>
                         <div class="row">
                             <div class="d-grid gap-1 col-6 mx-auto">
-                                <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                <a href="/pesanan/invoice/{{$row->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
                             </div>
                         </div>
                         @endif
@@ -478,14 +482,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="d-grid gap-1 col-6 mx-auto">
-                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                        <a href="/pesanan/invoice/{{$row->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
                                     </div>
                                 </div>
                             <?php elseif (($row->b_dp != NULL && $row->b_lunas != NULL) || $row->b_lunas != NULL) : ?>
                                 <h6 class="text text-success text-center">Lunas : Rp. <?= $lunas = ($row->jml_dp + $row->jml_lunas) ?></h6>
                                 <div class="row">
                                     <div class="d-grid gap-1 col-6 mx-auto">
-                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                        <a href="/pesanan/invoice/{{$row->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
                                     </div>
                                 </div>
                             <?php elseif ($row->b_dp == NULL && $row->b_lunas == NULL) : ?>
@@ -510,14 +514,14 @@
                                 </div>
                                 <div class="row">
                                     <div class="d-grid gap-1 col-6 mx-auto">
-                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                        <a href="/pesanan/invoice/{{$row->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
                                     </div>
                                 </div>
                             <?php elseif (($row->b_dp != NULL && $row->b_lunas != NULL) || $row->b_lunas != NULL) : ?>
                                 <h6 class="text text-success text-center">Lunas : Rp. <?= $lunas = ($row->jml_dp + $row->jml_lunas) ?></h6>
                                 <div class="row">
                                     <div class="d-grid gap-1 col-6 mx-auto">
-                                        <button type="button" class="btn btn-outline-success"><i class="fas fa-file-pdf"></i>Cetak Invoice</button>
+                                        <a href="/pesanan/invoice/{{$row->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
                                     </div>
                                 </div>
                             <?php elseif ($row->b_dp == NULL && $row->b_lunas == NULL) : ?>
@@ -534,6 +538,7 @@
         </div>
     </div>
 </div>
+<!-- end-modal info -->
 
 <!-- modal hapus -->
 <div class="modal fade" id="modalDelete{{$row->pesanan_id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

@@ -33,7 +33,7 @@
                                     <div class="form-group mt-2">
                                         <div class="col">
                                             <label>Email <span class="text text-danger">*</span></label>
-                                            <input class="form-control form-control-sm @error('email') is-invalid @enderror" type="email" name="email" placeholder="email@gmail.com" aria-label="default input example">
+                                            <input class="form-control form-control-sm @error('email') is-invalid @enderror" type="email" name="email" value="{{ old('email') }}" placeholder="email@gmail.com" aria-label="default input example">
                                             @error('email')
                                             <span class="invalid-feedback" role="alert">
                                                 <strong>{{ $message }}</strong>
@@ -55,12 +55,18 @@
                                 </div>
                                 <div class="d-grid gap-2 d-md-block mt-5">
                                     <button class="btn btn-sm col-12" style="background-color: #0FAA5D;" type="submit">Register</button>
+                                    <p class="text-center mt-3">Sudah memiliki akun ? silahkan,
+                                        <a class="text-decoration-none text-center" href="/login" style="color: #0FAA5D;">Login</a>
+                                    </p>
+                                    <div class="col-12 text-center mb-2">
+                                        <a class="text-decoration-none" href="/requestReset" style="color: #0FAA5D;">Forgot Password</a>
+                                    </div>
                                 </div>
-                                <div class="d-flex justify-content-center mt-4 mb-2">
+                                <!-- <div class="d-flex justify-content-center mt-4 mb-2">
                                     <a class="text-decoration-none text-center" href="/login" style="color: #0FAA5D;">Login</a>
                                     <p style="color: #0FAA5D;"> / </p>
                                     <a class="text-decoration-none text-center" href="requestReset" style="color: #0FAA5D;">Forgot Password</a>
-                                </div>
+                                </div> -->
                             </form>
                         </div>
                     </div>

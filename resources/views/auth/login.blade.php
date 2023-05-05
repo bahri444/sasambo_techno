@@ -30,7 +30,7 @@
                             <div class="form-group mt-3">
                                 <div class="col">
                                     <label class="color__green">Email <span class="text text-danger">*</span></label>
-                                    <input class="form-control form-control-sm" type="email" name="email" placeholder="email@gmail.com" aria-label="default input example">
+                                    <input class="form-control form-control-sm" type="email" name="email" placeholder="email@gmail.com" value="{{ old('email') }}" aria-label="default input example" autofocus>
                                 </div>
                             </div>
                             <div class="form-group mt-3">
@@ -42,11 +42,12 @@
                         </div>
                         <div class="d-grid gap-2 d-md-block mt-5">
                             <button class="btn btn-sm col-12" style="background-color: #0FAA5D;" type="submit">Login</button>
-                        </div>
-                        <div class="d-flex justify-content-center mt-4 mb-2">
-                            <a class="text-decoration-none text-center" href="register" style="color: #0FAA5D;">Sign Up</a>
-                            <p style="color: #0FAA5D;"> / </p>
-                            <a class="text-decoration-none text-center" href="requestReset" style="color: #0FAA5D;">Forgot Password</a>
+                            <p class="text-center mt-3">Belum memiliki akun ? ayo,
+                                <a class="text-decoration-none text-center" href="/register" style="color: #0FAA5D;">Register</a>
+                            </p>
+                            <div class="col-12 text-center mb-2">
+                                <a class="text-decoration-none" href="/requestReset" style="color: #0FAA5D;">Forgot Password</a>
+                            </div>
                         </div>
                     </form>
                 </div>
