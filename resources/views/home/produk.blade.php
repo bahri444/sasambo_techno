@@ -11,7 +11,7 @@
                 <a href="detailcustom/{{$ktgr->ktgr_procus_id}}">
                     <div class="card-body p-1">
                         <a href="detailcustom/{{$ktgr->ktgr_procus_id}}" class="text__nodecoration color__green">
-                            <img src="/foto_ktgr/{{$ktgr->foto_procus}}" class="card-img-top" alt="404">
+                            <img src="/foto_ktgr/{{$ktgr->foto_procus}}" class="card-img-top" width=230px height=265 alt="404">
                         </a>
                     </div>
                 </a>
