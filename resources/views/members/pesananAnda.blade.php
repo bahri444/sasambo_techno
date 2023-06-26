@@ -82,6 +82,9 @@
                                 @endif
                             </p>
                         </div>
+                        <div class="col">
+                            <p class="text-danger">lakukan pelunasan dengan nominal yang tertera pada sisa bayar</p>
+                        </div>
                         @elseif($vals->b_dp == TRUE && $vals->b_lunas == TRUE)
                         <div class="col">
                             <h6 class="text text-success">Lunas</h6>
@@ -104,6 +107,9 @@
                         </div>
                         <div class="col">
                             <p class="text text-danger">: Rp. <?= $sisa = $vals->getEkspedisiDanDiskon->total_semua_pesanan - $vals->jml_dp ?></p>
+                        </div>
+                        <div class="col">
+                            <p class="text-danger">lakukan pelunasan dengan nominal yang tertera pada sisa bayar</p>
                         </div>
                         @elseif(($vals->b_dp != NULL && $vals->b_lunas != NULL) || $vals->b_dp == NULL && $vals->b_lunas != NULL)
                         <div class="col">
@@ -355,6 +361,9 @@
                                 <div class="col-md-3 col-lg-8 col-sm-6">
                                     <p class="text text-danger">: Rp. {{($data->getEkspedisiDandiskon->total_semua_pesanan) - ($data->jml_dp)}}</p>
                                 </div>
+                                <div class="col-md-3 col-lg-8 col-sm-6">
+                                    <p class="text-danger">lakukan pelunasan dengan nominal yang tertera pada sisa bayar</p>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="d-grid gap-1 col-6 mx-auto">
@@ -395,6 +404,9 @@
                                     <div class="col-md-3 col-lg-8 col-sm-6">
                                         <p class="text text-danger">: Rp. <?= $sisa = ($data->jml_order * $data->harga) - $data->jml_dp ?></p>
                                     </div>
+                                    <div class="col-md-3 col-lg-8 col-sm-6">
+                                        <p class="text text-danger">lakukan pelunasan dengan nominal yang tertera pada sisa bayar</p>
+                                    </div>
                                     <div class="row">
                                         <div class="d-grid gap-1 col-6 mx-auto">
                                             <a href="/pesanan/invoice/{{$data->pesanan_id}}" class="btn btn-outline-success"><i class="fas fa-invoice"></i>Invoice</a>
@@ -426,6 +438,9 @@
                                     </div>
                                     <div class="col-md-3 col-lg-8 col-sm-6">
                                         <p class="text text-danger">: Rp. <?= $sisa = ($data->jml_order * $data->harga_satuan) - $data->jml_dp ?></p>
+                                    </div>
+                                    <div class="col-md-3 col-lg-8 col-sm-6">
+                                        <p class="text text-danger">lakukan pelunasan dengan nominal yang tertera pada sisa bayar</p>
                                     </div>
                                     <div class="row">
                                         <div class="d-grid gap-1 col-6 mx-auto">
